@@ -1,0 +1,11 @@
+{
+    "name": "Pateints",
+    "alias": "pateints",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Pateints\\Providers\\PateintsServiceProvider"
+    ],
+    "files": []
+}
