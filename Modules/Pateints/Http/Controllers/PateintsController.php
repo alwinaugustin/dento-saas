@@ -17,10 +17,8 @@ class PateintsController extends Controller
      */
     public function index()
     {
-        $patients = Patient::all();
         return Inertia::render('pateints::Index', [
-            'patients'=>$patients,
-            'total_records' => count($patients)
+            'patients'      => Patient::all()
         ]);
     }
 
@@ -30,7 +28,9 @@ class PateintsController extends Controller
      */
     public function create()
     {
-        return Inertia::render('pateints::Create');
+        return Inertia::render('pateints::Create', [
+                'patient_id'=>Patient::max('id')+1
+        ]);
     }
 
     /**
@@ -40,25 +40,26 @@ class PateintsController extends Controller
      */
     public function store(Request $request)
     {
-        $patient = Patient::create([
-                'name'              =>$request->input('name'),
-                'gender'            =>$request->input('gender'),
-                'age'               =>$request->input('age'),
-                'blood_group'       =>$request->input('blood_group'),
-                'marital_status'    =>$request->input('marital_status'),
-                'contact_number'    =>$request->input('contact_number'),
-                'email_id'          =>$request->input('email'),
-                'immediate_contact' =>$request->input('imm_contact_number'),
-                'contact_relation'  =>$request->input('imm_contact_relation'),
-                'address'           =>$request->input('address'),
-                'address_2'         =>$request->input('address_2'),
-                'city'              =>$request->input('city'),
-                'state'             =>$request->input('state'),
-                'postal_code'       =>$request->input('postal_code'),
-                'referred_by'=>'Alwin'
-        ]);
+        $patient = Patient::create($request->validate(
+            [
+                'name'              =>'required|max:50|regex:/^[\pL\s\-]+$/u',
+                'gender'            =>'required|max:50|alpha:ascii|in:male,female,other',
+                'age'               =>'required|numeric',
+                'blood_group'       =>'required',
+                'marital_status'    =>'required',
+                'contact_number'    =>'required',
+                'email_id'          =>'required|email',
+                'immediate_contact' =>'required',
+                'contact_relation'  =>'alpha:ascii',
+                'address'           =>'required|max:250',
+                'address_2'         =>'required|max:250',
+                'city'              =>'required|max:50',
+                'state'             =>'required|max:50',
+                'postal_code'       =>'required|numeric',
+                'referred_by'       =>'alpha'
+        ]));
 
-        return to_route('patients');
+        return redirect('/pateints')->with('notification','Patient Added Successfully');
     }
 
     /**

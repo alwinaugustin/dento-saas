@@ -18,17 +18,20 @@ const submit = () => {
     <AppLayout>
         <template #header>
             <div class="grid grid-cols-6 gap-6 m-1">
-            <div class="col-span-10">
-                <span class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Patients</span>
+                <div class="col-span-10">
+                    <span class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Patients</span>
+                </div>
             </div>
-        </div>
-    </template>
-    <div class="py-5">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900 dark:text-gray-100">
-                        <div class="p-3">
-                        <DataTable :value="$page['props']['patients']" responsiveLayout="scroll" :paginator="true"
+        </template>
+        <div class="py-2">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div v-if="$page.props.flash.notification" class="alert">
+                    {{ $page.props.flash.notification }}
+                </div>
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-2 text-gray-900 dark:text-gray-100">
+                        <div class="p-2">
+                            <DataTable :value="$page['props']['patients']" responsiveLayout="scroll" :paginator="true"
                                 paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                                 :rows="10" dataKey="id" :rowsPerPageOptions="[10, 25, 50]"
                                 currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">

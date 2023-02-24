@@ -1,37 +1,38 @@
 <script setup>
-import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Dropdown from 'primevue/dropdown';
 import * as states from '../assets/js/states';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import Button from "primevue/button";
+import { router } from '@inertiajs/vue3';
+import { reactive } from 'vue';
 
 
 defineProps({
-    canResetPassword: Boolean,
-    status: String,
+    errors: Object,
+    id: null
 });
 
-const form = useForm({
-    prefix: '',
-    name: '',
-    gender: '',
-    age: '',
-    blood_group: '',
-    marital_status: '',
-    contact_number: '',
-    email: '',
-    imm_contact_number: '',
-    imm_contact_relation: '',
-    address: '',
-    address_2: '',
-    city: '',
-    state: '',
-    postal_code: ''
+const form = reactive({
+    prefix: null,
+    name: null,
+    gender: null,
+    age: null,
+    blood_group: null,
+    marital_status: null,
+    contact_number: null,
+    email_id: null,
+    immediate_contact: null,
+    contact_relation: null,
+    address: null,
+    address_2: null,
+    city: null,
+    state: null,
+    postal_code: null,
+    referred_by: null
 });
 
 const gender = [
@@ -60,28 +61,35 @@ const prefixes = [
 ];
 
 const submit = () => {
-    form.post(route('pateints/create'), {
-        onFinish: () => form.reset('password'),
-    });
+    router.post('/pateints/create', form)
 };
+const cancel = () => {
+    form.reset();
+    router.get('/', form)
+}
 </script>
 <template>
     <Head title="Add Patient" />
     <AppLayout>
         <template #header>
-            <div class="grid grid-cols-6 gap-6 m-1">
-                <div class="col-span-10">
-                 <span class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Add Patient</span>
-                 </div>
+            <div class="m-1">
+                <div>
+                    <span class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Add Patient</span>
+                    <div v-if="Object.keys(errors).length">
+                        <div class="bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-4" role="alert">
+                            <p v-for="error in errors">{{ error }}</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </template>
         <form @submit.prevent="submit">
-            <div class="py-5">
+            <div class="py-2">
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                         <div class="p-6 text-gray-900 dark:text-gray-100">
-                            <div class="p-3">
-                                <div class="grid grid-cols-3 gap-6 m-1">
+                            <div class="p-2">
+                                <div class="grid grid-cols-3 gap-4 m-1">
                                     <div class="col-span-2">
                                         <InputLabel for="prefix" value="Prefix" />
                                         <Dropdown v-model="form.prefix" :options="prefixes" optionLabel="name"
@@ -89,18 +97,17 @@ const submit = () => {
                                     </div>
                                     <div class="col-span-2">
                                         <InputLabel for="name" value="Patient Name" />
-                                        <TextInput id="name" type="text" class="mt-1 block w-full" v-model="form.name"
+                                        <TextInput id="name" type="text" class="mt-1 block w-12" v-model="form.name"
                                             required />
                                     </div>
                                     <div class="col-span-2">
                                         <InputLabel for="id" value="Patient ID" />
-                                        <TextInput id="id" type="text" class="mt-1 block w-full" v-model="id" disabled />
+                                        <TextInput id="id" type="text" class="mt-1 block w-12" disabled />
                                     </div>
                                 </div>
-
                             </div>
-                            <div class="p-3">
-                                <div class="grid grid-cols-4 gap-6 m-1">
+                            <div class="p-2">
+                                <div class="grid grid-cols-4 gap-4 m-1">
                                     <div class="col-span-2">
                                         <InputLabel for="prefix" value="Gender" />
                                         <Dropdown v-model="form.gender" :options="gender" optionLabel="name"
@@ -108,7 +115,7 @@ const submit = () => {
                                     </div>
                                     <div class="col-span-2">
                                         <InputLabel for="age" value="Age" />
-                                        <TextInput id="age" type="text" class="mt-1 block w-full" v-model="form.age"
+                                        <TextInput id="age" type="text" class="mt-1 block w-12" v-model="form.age"
                                             required />
                                     </div>
                                     <div class="col-span-2">
@@ -122,66 +129,83 @@ const submit = () => {
                                             optionValue="value" placeholder="Select" />
                                     </div>
                                 </div>
-
                             </div>
-                            <div class="p-3">
-                                <div class="grid grid-cols-4 gap-6 m-1">
+                            <div class="p-2">
+                                <div class="grid grid-cols-4 gap-4 m-1">
                                     <div class="">
                                         <InputLabel for="contact_number" value="Contact Number" />
-                                        <TextInput id="contact_number" type="text" class="mt-1 block w-full"
+                                        <TextInput id="contact_number" type="text" class="mt-1 block w-12"
                                             v-model="form.contact_number" required />
+
                                     </div>
                                     <div class="">
-                                        <InputLabel for="email" value="Email ID" />
-                                        <TextInput id="email" type="text" class="mt-1 block w-full" v-model="form.email"
+                                        <InputLabel for="email_id" value="Email ID" />
+                                        <TextInput id="email_id" type="text" class="mt-1 block w-12" v-model="form.email_id"
                                             required />
+
                                     </div>
                                     <div class="col-start-1 col-end-7">
-                                        <InputLabel for="imm_contact_number" value="Immedeate Contact Number" />
-                                        <TextInput id="imm_contact_number" type="text" class="mt-1 block w-full"
-                                            v-model="form.imm_contact_number" />
+                                        <InputLabel for="immediate_contact" value="Immedeate Contact Number" />
+                                        <TextInput id="immediate_contact" type="text" class="mt-1 block w-12"
+                                            v-model="form.immediate_contact" />
                                     </div>
                                     <div class="col-start-1 col-end-7">
-                                        <InputLabel for="imm_contact_relation" value="Immedeate Contact Relation" />
-                                        <TextInput id="imm_contact_relation" type="text" class="mt-1 block w-full"
-                                            v-model="form.imm_contact_relation" />
+                                        <InputLabel for="contact_relation" value="Immedeate Contact Relation" />
+                                        <TextInput id="contact_relation" type="text" class="mt-1 block w-12"
+                                            v-model="form.contact_relation" />
+
                                     </div>
                                 </div>
                             </div>
-                            <div class="p-3">
-                                <div class="grid grid-cols-4 gap-6 m-1">
+                            <div class="p-2">
+                                <div class="grid grid-cols-4 gap-4 m-1">
                                     <div class="">
                                         <InputLabel for="address" value="Address" />
-                                        <TextInput id="address" type="text" class="mt-1 block w-full" v-model="form.address"
+                                        <TextInput id="address" type="text" class="mt-1 block w-12" v-model="form.address"
                                             required />
+
                                     </div>
                                     <div class="">
                                         <InputLabel for="address_2" value="Apartment" />
-                                        <TextInput id="address_2" type="text" class="mt-1 block w-full"
+                                        <TextInput id="address_2" type="text" class="mt-1 block w-12"
                                             v-model="form.address_2" required />
+                                        <div class="validation_errors text-red-700 text-sm" v-if="errors.address_2">{{
+                                            errors.address_2 }}</div>
                                     </div>
                                     <div class="col-start-1 col-end-7">
                                         <InputLabel for="city" value="City" />
-                                        <TextInput id="city" type="text" class="mt-1 block w-full" v-model="form.city"
+                                        <TextInput id="city" type="text" class="mt-1 block w-12" v-model="form.city"
                                             required />
+
                                     </div>
                                     <div class="col-start-1 col-end-7">
                                         <InputLabel for="state" value="State" />
                                         <Dropdown v-model="form.state" :options="states.default" optionLabel="name"
                                             optionValue="value" placeholder="Select" />
+
                                     </div>
                                 </div>
                             </div>
-                            <div class="p-3">
-                                <div class="grid grid-cols-4 gap-6 m-1">
+                            <div class="p-2">
+                                <div class="grid grid-cols-4 gap-4 m-1">
                                     <div class="">
                                         <InputLabel for="postal_code" value="Postal Code" />
-                                        <TextInput id="postal_code" type="text" class="mt-1 block w-full"
+                                        <TextInput id="postal_code" type="text" class="mt-1 block w-12"
                                             v-model="form.postal_code" required />
+
+                                    </div>
+                                    <div class="">
+                                        <InputLabel for="referred_by" value="Referred By" />
+                                        <TextInput id="referred_by" type="text" class="mt-1 block w-12"
+                                            v-model="form.referred_by" required />
+
                                     </div>
                                 </div>
-                                <div class="grid grid-cols-4 gap-6 m-1">
-                                    <PrimaryButton class="ml-4" :class="{ 'opacity-25': form.processing }"
+                            </div>
+                            <div class="p-2">
+                                <div class="grid grid-cols-4 gap-6 m-1" style="justify-content: flex-end">
+                                    <SecondaryButton class="ml-2" @click="cancel()">Cancel</SecondaryButton>
+                                    <PrimaryButton class="ml-2" :class="{ 'opacity-25': form.processing }"
                                         :disabled="form.processing">
                                         Add Patient
                                     </PrimaryButton>
