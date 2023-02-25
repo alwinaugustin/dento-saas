@@ -43,12 +43,11 @@ function resolvePageComponent(name) {
                         .replaceAll('.', '/') }.vue`,
                 ),
             )
-        console.log(pages)
         // Throw an error if the page is not found
         if (!path) {
             throw new Error(`Page not found: ${ isModule[1] }`)
         }
-
+        console.log(path)
         // Return the page
         return typeof pages[path] === 'function' ? pages[path]() : pages[path]
 
