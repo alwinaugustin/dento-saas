@@ -3,7 +3,7 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import Dropdown from 'primevue/dropdown';
 import * as states from '../assets/js/states';
 import AppLayout from '@/Layouts/AppLayout.vue';
@@ -16,7 +16,10 @@ defineProps({
     id: null
 });
 
-const form = reactive({
+let patient = null;
+
+let form = reactive({
+    id: null,
     prefix: null,
     name: null,
     gender: null,
@@ -34,6 +37,31 @@ const form = reactive({
     postal_code: null,
     referred_by: null
 });
+
+if (usePage().props.patient) {
+    patient = usePage().props.patient[0];
+    form = reactive({
+        id: patient.id ? patient.id : null,
+        prefix: patient.prefix ? patient.prefix : null,
+        name: patient.name ? patient.name : null,
+        gender: patient.gender ? patient.gender : null,
+        age: patient.age ? patient.age : null,
+        blood_group: patient.blood_group ? patient.blood_group : null,
+        marital_status: patient.marital_status ? patient.marital_status : null,
+        contact_number: patient.contact_number ? patient.contact_number : null,
+        email_id: patient.email_id ? patient.email_id : null,
+        immediate_contact: patient.immediate_contact ? patient.immediate_contact : null,
+        contact_relation: patient.contact_relation ? patient.contact_relation : null,
+        address: patient.address ? patient.address : null,
+        address_2: patient.address_2 ? patient.address_2 : null,
+        city: patient.city ? patient.city : null,
+        state: patient.state ? patient.state : null,
+        postal_code: patient.postal_code ? patient.postal_code : null,
+        referred_by: patient.referred_by ? patient.referred_by : null
+    });
+}
+
+const title = patient ? 'Update' : 'Add';
 
 const gender = [
     { name: 'Male', value: 'male' },
@@ -69,12 +97,13 @@ const cancel = () => {
 }
 </script>
 <template>
-    <Head title="Add Patient" />
+    <Head :title="title + ' Pateint'" />
     <AppLayout>
         <template #header>
             <div class="m-1">
                 <div>
-                    <span class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Add Patient</span>
+                    <span class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">{{ title
+                    }} Patient</span>
                     <div v-if="Object.keys(errors).length">
                         <div class="bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-4" role="alert">
                             <p v-for="error in errors">{{ error }}</p>
@@ -207,7 +236,7 @@ const cancel = () => {
                                     <SecondaryButton class="ml-2" @click="cancel()">Cancel</SecondaryButton>
                                     <PrimaryButton class="ml-2" :class="{ 'opacity-25': form.processing }"
                                         :disabled="form.processing">
-                                        Add Patient
+                                        {{ title }} Patient
                                     </PrimaryButton>
                                 </div>
                             </div>

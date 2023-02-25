@@ -26,8 +26,11 @@
 
 .layout-sidebar::-webkit-scrollbar,
 .layout-sidebar::-webkit-scrollbar-track,
-.layout-sidebar::-webkit-scrollbar-thumb
-{
+.layout-sidebar::-webkit-scrollbar-thumb {
     border-top-right-radius: 12px;
     border-bottom-right-radius: 12px;
+}
+
+.p-datatable .p-sortable-column .p-sortable-column-icon {
+    font-size: 0.75rem;
 }

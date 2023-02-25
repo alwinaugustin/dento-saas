@@ -26,11 +26,19 @@ class PateintsController extends Controller
      * Show the form for creating a new resource.
      * @return \Inertia\Response
      */
-    public function create()
+    public function create($id = null)
     {
-        return Inertia::render('pateints::Create', [
+        if (!$id) {
+            return Inertia::render('pateints::Create', [
                 'patient_id'=>Patient::max('id')+1
-        ]);
+            ]);
+        } else {
+            
+            $patient = Patient::where(['id'=>$id])->get();
+            return Inertia::render('pateints::Create', [
+                'patient'=>$patient
+            ]);
+        }
     }
 
     /**
@@ -40,7 +48,9 @@ class PateintsController extends Controller
      */
     public function store(Request $request)
     {
-        $patient = Patient::create($request->validate(
+        $patient = Patient::updateOrCreate([
+            'id'=>$request->get('id')
+        ], $request->validate(
             [
                 'name'              =>'required|max:50|regex:/^[\pL\s\-]+$/u',
                 'gender'            =>'required|max:50|alpha:ascii|in:male,female,other',
