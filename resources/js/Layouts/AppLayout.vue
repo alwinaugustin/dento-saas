@@ -48,7 +48,13 @@ export default {
                             items: [
                                 { label: 'Manage', to: this.route('patients/index') },
                                 { label: 'Create', to: this.route('patients/create') },
-                                // { label: 'Permissions', to: this.route('permissions') },
+                            ]
+                        },
+                        {
+                            label: 'Doctors', icon: 'pi pi-fw pi-heart',
+                            items: [
+                                { label: 'Manage', to: this.route('doctors/index') },
+                                { label: 'Create', to: this.route('doctors/create') },
                             ]
                         },
                         {

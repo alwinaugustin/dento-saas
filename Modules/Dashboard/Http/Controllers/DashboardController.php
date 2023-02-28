@@ -15,7 +15,7 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        return Inertia::render('dashboard::Index');
+        return Inertia::render('Dashboard::Index');
     }
 
     /**
@@ -24,7 +24,7 @@ class DashboardController extends Controller
      */
     public function create()
     {
-        return Inertia::render('dashboard::Create');
+        return Inertia::render('Dashboard::Create');
         //return view('dashboard::create');
     }
 

@@ -17,7 +17,7 @@ class PateintsController extends Controller
      */
     public function index()
     {
-        return Inertia::render('pateints::Index', [
+        return Inertia::render('Pateints::Index', [
             'patients'      => Patient::all()
         ]);
     }
@@ -29,14 +29,16 @@ class PateintsController extends Controller
     public function create($id = null)
     {
         if (!$id) {
-            return Inertia::render('pateints::Create', [
-                'patient_id'=>Patient::max('id')+1
+            return Inertia::render('Pateints::Create', [
+                'patient_id'=>Patient::max('id')+1,
+                'token'=>csrf_token()
             ]);
         } else {
             
             $patient = Patient::where(['id'=>$id])->get();
-            return Inertia::render('pateints::Create', [
-                'patient'=>$patient
+            return Inertia::render('Pateints::Create', [
+                'patient'=>$patient,
+                'token'=>csrf_token()
             ]);
         }
     }
@@ -77,30 +79,20 @@ class PateintsController extends Controller
      * @param int $id
      * @return Renderable
      */
-    public function show($id)
+    public function upload(Request $request)
     {
-        return view('pateints::show');
+        $file = $request->file('patient_file');
+        $file->move('uploads',$file->getClientOriginalName());
+
+        return true;
     }
 
     /**
-     * Show the form for editing the specified resource.
-     * @param int $id
-     * @return Renderable
+     * Get patients
      */
-    public function edit($id)
+    public function get()
     {
-        return view('pateints::edit');
-    }
-
-    /**
-     * Update the specified resource in storage.
-     * @param Request $request
-     * @param int $id
-     * @return Renderable
-     */
-    public function update(Request $request, $id)
-    {
-        //
+        return Patient::all()->toJson();
     }
 
     /**

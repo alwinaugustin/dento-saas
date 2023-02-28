@@ -1,5 +1,6 @@
 {
     "Dashboard": true,
     "Pateints": true,
-    "Doctors": true
+    "Doctors": true,
+    "Appointments": true
 }

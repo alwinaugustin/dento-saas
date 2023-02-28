@@ -9,7 +9,8 @@ import * as states from '../assets/js/states';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { router } from '@inertiajs/vue3';
 import { reactive } from 'vue';
-
+import FileUpload from 'primevue/fileupload';
+import Textarea from 'primevue/textarea';
 
 defineProps({
     errors: Object,
@@ -35,7 +36,8 @@ let form = reactive({
     city: null,
     state: null,
     postal_code: null,
-    referred_by: null
+    referred_by: null,
+    additional_info: null
 });
 
 if (usePage().props.patient) {
@@ -57,7 +59,8 @@ if (usePage().props.patient) {
         city: patient.city ? patient.city : null,
         state: patient.state ? patient.state : null,
         postal_code: patient.postal_code ? patient.postal_code : null,
-        referred_by: patient.referred_by ? patient.referred_by : null
+        referred_by: patient.referred_by ? patient.referred_by : null,
+        additional_info: patient.additional_info ? patient.additional_info : null
     });
 }
 
@@ -94,6 +97,14 @@ const submit = () => {
 const cancel = () => {
     form.reset();
     router.get('/', form)
+}
+const onUpload = () => {
+    console.log("HERE");
+}
+const addHeader = (event) => {
+    console.log(usePage().props);
+    event.formData._token = usePage().props.token
+    console.log(event);
 }
 </script>
 <template>
@@ -228,6 +239,24 @@ const cancel = () => {
                                         <TextInput id="referred_by" type="text" class="mt-1 block w-12"
                                             v-model="form.referred_by" required />
 
+                                    </div>
+                                    <div class="col-start-1 col-end-7">
+                                        <InputLabel for="medical_condition" value="Medical Condition" />
+                                        <Dropdown v-model="form.state" :options="states.default" optionLabel="name"
+                                            optionValue="value" placeholder="Select" />
+                                    </div>
+                                    <div class="col-start-1 col-end-7">
+                                        <InputLabel for="patient_file" value="Upload Files" />
+                                        <FileUpload mode="basic" name="patient_file" url="/pateints/upload" :multiple="true"
+                                            @upload="onUpload" :auto="true" @before-upload="addHeader" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-2">
+                                <div class="grid grid-cols-4 gap-4 m-1">
+                                    <div class="">
+                                        <InputLabel for="address" value="Additional Info" />
+                                        <Textarea v-model="form.additional_info" rows="5" cols="30" />
                                     </div>
                                 </div>
                             </div>

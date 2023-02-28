@@ -16,7 +16,7 @@ class DoctorsController extends Controller
      */
     public function index()
     {
-        return Inertia::render('doctors::Index', [
+        return Inertia::render('Doctors::Index', [
             'doctors'=> Doctor::all()
         ]);
     }
@@ -28,10 +28,10 @@ class DoctorsController extends Controller
     public function create($id =null)
     {
         if (!$id) {
-            return Inertia::render('doctors::Create');
+            return Inertia::render('Doctors::Create');
         }
         
-        return Inertia::render('doctors::Create', [
+        return Inertia::render('Doctors::Create', [
             'doctor'=>Doctor::where(['id'=>$id])->get()
         ]);
     }
@@ -57,35 +57,12 @@ class DoctorsController extends Controller
         return redirect('/doctors')->with('notification','Doctor Added Successfully');
     }
 
-    /**
-     * Show the specified resource.
-     * @param int $id
-     * @return Renderable
+     /**
+     * Get doctors
      */
-    public function show($id)
+    public function get()
     {
-        return view('doctors::show');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
-    public function edit($id)
-    {
-        return view('doctors::edit');
-    }
-
-    /**
-     * Update the specified resource in storage.
-     * @param Request $request
-     * @param int $id
-     * @return Renderable
-     */
-    public function update(Request $request, $id)
-    {
-        //
+        return Doctor::all()->toJson();
     }
 
     /**

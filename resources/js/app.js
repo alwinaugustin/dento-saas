@@ -31,23 +31,19 @@ function resolvePageComponent(name) {
     if (isModule.length > 1) {
 
         // Import pages from the modules folder
-        let pages = import.meta.glob('../../Modules/**/Resources/Pages/*.vue')
+        let pages = import.meta.glob(`../../Modules/**/Resources/Pages/*.vue`)
 
-        // Sort and replace the wrong slash and dot with the correct slash
+        const findPath = '../../Modules/' + isModule[0]
+
         const path = Object.keys(pages)
-            .sort((a, b) => a.length - b.length)
             .find(path =>
-                path.endsWith(
-                    `${ isModule[1]
-                        .replaceAll('\\', '/')
-                        .replaceAll('.', '/') }.vue`,
-                ),
+                path.startsWith(findPath) && path.endsWith(isModule[1] + '.vue')
             )
+
         // Throw an error if the page is not found
         if (!path) {
             throw new Error(`Page not found: ${ isModule[1] }`)
         }
-        console.log(path)
         // Return the page
         return typeof pages[path] === 'function' ? pages[path]() : pages[path]
 
