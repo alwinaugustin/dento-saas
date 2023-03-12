@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Inertia\Inertia;
 use Modules\Pateints\Entities\Patient;
+use Modules\Doctors\Entities\Doctor;
 
 
 class PateintsController extends Controller
@@ -34,7 +35,6 @@ class PateintsController extends Controller
                 'token'=>csrf_token()
             ]);
         } else {
-            
             $patient = Patient::where(['id'=>$id])->get();
             return Inertia::render('Pateints::Create', [
                 'patient'=>$patient,
@@ -54,6 +54,7 @@ class PateintsController extends Controller
             'id'=>$request->get('id')
         ], $request->validate(
             [
+                'prefix'            =>'required',
                 'name'              =>'required|max:50|regex:/^[\pL\s\-]+$/u',
                 'gender'            =>'required|max:50|alpha:ascii|in:male,female,other',
                 'age'               =>'required|numeric',
@@ -72,6 +73,16 @@ class PateintsController extends Controller
         ]));
 
         return redirect('/pateints')->with('notification','Patient Added Successfully');
+    }
+
+    public function show($id)
+    {
+        $patient = Patient::where(['id'=>$id])->with(['appointments', 'appointments.doctor'])->first()->toArray();
+        $doctors = Doctor::get();
+        return Inertia::render('Pateints::Show', [
+            'patient' => $patient,
+            'doctors' => $doctors
+        ]);
     }
 
     /**

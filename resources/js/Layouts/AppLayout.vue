@@ -4,10 +4,9 @@
         <div class="layout-sidebar" @click="onSidebarClick">
             <AppMenu :model="menu" @menuitem-click="onMenuItemClick" />
         </div>
-
         <div class="layout-main-container">
             <header class="py-2" v-if="$slots.header">
-                <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div class="">
                     <slot name="header" />
                 </div>
             </header>
@@ -51,10 +50,17 @@ export default {
                             ]
                         },
                         {
-                            label: 'Doctors', icon: 'pi pi-fw pi-heart',
+                            label: 'Doctors', icon: 'pi pi-fw pi-shield',
                             items: [
                                 { label: 'Manage', to: this.route('doctors/index') },
                                 { label: 'Create', to: this.route('doctors/create') },
+                            ]
+                        },
+                        {
+                            label: 'Appointments', icon: 'pi pi-fw pi-calendar-plus',
+                            items: [
+                                { label: 'Manage', to: this.route('appointments/index') },
+                                { label: 'Create', to: this.route('appointments/create') },
                             ]
                         },
                         {

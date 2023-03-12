@@ -25,6 +25,7 @@ let form = reactive({
     patient_id: null,
     doctor_id: null,
     contact_number: null,
+    gender: null,
     purpose: null,
     appointment_time: null,
     additional_information: null,
@@ -33,14 +34,17 @@ let form = reactive({
 
 if (usePage().props.appointment) {
     appointment = usePage().props.appointment[0];
+    console.log(appointment);
     form = reactive({
         id: appointment.id ? appointment.id : null,
         patient_id: appointment.patient_id ? appointment.patient_id : null,
         doctor_id: appointment.doctor_id ? appointment.doctor_id : null,
-        contact_number: appointment.contact_number ? appointment.contact_number : null,
+        contact_number: appointment['patient'].contact_number ? appointment['patient'].contact_number : null,
+        gender: appointment['patient'].gender ? appointment['patient'].gender : null,
         purpose: appointment.purpose ? appointment.purpose : null,
         appointment_time: appointment.appointment_time ? appointment.appointment_time : null,
         additional_information: appointment.additional_information ? appointment.additional_information : null,
+        status: appointment.status ? appointment.status : null,
     });
 }
 
@@ -50,10 +54,9 @@ const submit = () => {
     router.post('/appointments/create', form)
 };
 const cancel = () => {
-    form.reset();
-    router.get('/', form)
+    Object.assign(form, form)
+    router.get('/appointments')
 }
-
 
 const patients = ref([]);
 const doctors = ref([]);
@@ -71,9 +74,10 @@ getPatients();
 getDoctors();
 
 const onPatientChange = (event) => {
-    form.patient_id = patients._value[event.value].id
-    form.contact_number = patients._value[event.value].contact_number
-    form.gender = patients._value[event.value].gender
+    const index = event.value - 1;
+    form.patient_id = patients._value[index].id
+    form.contact_number = patients._value[index].contact_number
+    form.gender = patients._value[index].gender
 }
 const status = [
     { name: 'Scheduled', value: 'scheduled' },
@@ -100,74 +104,72 @@ const status = [
         </template>
         <form @submit.prevent="submit">
             <div class="py-2">
-                <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                        <div class="p-6 text-gray-900 dark:text-gray-100">
-                            <div class="p-2">
-                                <div class="grid grid-cols-3 gap-4 m-1">
-                                    <div class="col-span-2">
-                                        <InputLabel for="patient_id" value="Patient" />
-                                        <Dropdown v-model="form.patient_id" :options="patients" optionLabel="name"
-                                            optionValue="id" placeholder="Select Patient" @change="onPatientChange"
-                                            :filter="true" />
-                                    </div>
-                                    <div class="col-span-2">
-                                        <InputLabel for="patient_id" value="Patient ID" />
-                                        <TextInput id="patient_id" type="text" class="mt-1 block w-12"
-                                            v-model="form.patient_id" disabled />
-                                    </div>
-                                    <div class="col-span-2">
-                                        <InputLabel for="more_info" value="Contact Number" />
-                                        <TextInput id="contact_number" type="text" class="mt-1 block w-12"
-                                            v-model="form.contact_number" disabled />
-                                    </div>
-                                    <div class="col-span-2">
-                                        <InputLabel for="gender" value="Gender" />
-                                        <TextInput id="gender" type="text" class="mt-1 block w-12" v-model="form.gender"
-                                            disabled />
-                                    </div>
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6 text-gray-900 dark:text-gray-100">
+                        <div class="p-2">
+                            <div class="grid grid-cols-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 m-1">
+                                <div class="">
+                                    <InputLabel for="patient_id" value="Patient" />
+                                    <Dropdown v-model="form.patient_id" :options="patients" optionLabel="name"
+                                        optionValue="id" placeholder="Select Patient" @change="onPatientChange"
+                                        :filter="true" />
+                                </div>
+                                <div class="">
+                                    <InputLabel for="patient_id" value="Patient ID" />
+                                    <TextInput id="patient_id" type="text" class="mt-1 block w-12" v-model="form.patient_id"
+                                        disabled />
+                                </div>
+                                <div class="">
+                                    <InputLabel for="more_info" value="Contact Number" />
+                                    <TextInput id="contact_number" type="text" class="mt-1 block w-12"
+                                        v-model="form.contact_number" disabled />
+                                </div>
+                                <div class="">
+                                    <InputLabel for="gender" value="Gender" />
+                                    <TextInput id="gender" type="text" class="mt-1 block w-12" v-model="form.gender"
+                                        disabled />
                                 </div>
                             </div>
-                            <div class="p-2">
-                                <div class="grid grid-cols-3 gap-4 m-1">
-                                    <div class="col-span-2">
-                                        <InputLabel for="purpose" value="Purpose" />
-                                        <TextInput id="purpose" type="text" class="mt-1 block w-12" v-model="form.purpose"
-                                            required />
-                                    </div>
-                                    <div class="col-span-2">
-                                        <InputLabel for="doctor_id" value="Doctor" />
-                                        <Dropdown v-model="form.doctor_id" :options="doctors" optionLabel="name"
-                                            optionValue="id" placeholder="Select Doctor" :filter="true" />
-                                    </div>
-                                    <div class="col-span-2">
-                                        <InputLabel for="appointment_time" value="Date and Time" />
-                                        <Calendar inputId="appointment_time" v-model="form.appointment_time"
-                                            :showTime="true" :showSeconds="false" hourFormat="12" />
-                                    </div>
-                                    <div class="col-span-2">
-                                        <InputLabel for="status" value="Status" />
-                                        <Dropdown v-model="form.status" :options="status" optionLabel="name"
-                                            optionValue="value" placeholder="Select Status" />
-                                    </div>
+                        </div>
+                        <div class="p-2">
+                            <div class="grid grid-cols-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 m-1">
+                                <div class="">
+                                    <InputLabel for="doctor_id" value="Doctor" />
+                                    <Dropdown v-model="form.doctor_id" :options="doctors" optionLabel="name"
+                                        optionValue="id" placeholder="Select Doctor" :filter="true" />
+                                </div>
+                                <div class="">
+                                    <InputLabel for="purpose" value="Purpose" />
+                                    <TextInput id="purpose" type="text" class="mt-1 block w-12" v-model="form.purpose"
+                                        required />
+                                </div>
+                                <div>
+                                    <InputLabel for="appointment_time" value="Date and Time" />
+                                    <Calendar inputId="appointment_time" v-model="form.appointment_time" :showTime="true"
+                                        :showSeconds="false" hourFormat="12" />
+                                </div>
+                                <div>
+                                    <InputLabel for="status" value="Status" />
+                                    <Dropdown v-model="form.status" :options="status" optionLabel="name" optionValue="value"
+                                        placeholder="Select Status" />
                                 </div>
                             </div>
-                            <div class="p-2">
-                                <div class="grid grid-cols-3 gap-4 m-1">
-                                    <div class="col-span-12">
-                                        <InputLabel for="purpose" value="Additional Info" />
-                                        <Textarea v-model="form.additional_information" rows="5" cols="70" />
-                                    </div>
+                        </div>
+                        <div class="p-2">
+                            <div class="grid grid-cols-3 gap-4 m-1">
+                                <div class="col-span-12">
+                                    <InputLabel for="purpose" value="Additional Info" />
+                                    <Textarea v-model="form.additional_information" rows="5" cols="70" />
                                 </div>
                             </div>
-                            <div class="p-2">
-                                <div class="grid grid-cols-4 gap-6 m-1" style="justify-content: flex-end">
-                                    <SecondaryButton class="ml-2" @click="cancel()">Cancel</SecondaryButton>
-                                    <PrimaryButton class="ml-2" :class="{ 'opacity-25': form.processing }"
-                                        :disabled="form.processing">
-                                        {{ title }} Appointment
-                                    </PrimaryButton>
-                                </div>
+                        </div>
+                        <div class="p-2">
+                            <div class="flex justify-end">
+                                <SecondaryButton class="ml-2" @click="cancel()">Cancel</SecondaryButton>
+                                <PrimaryButton class="ml-2" :class="{ 'opacity-25': form.processing }"
+                                    :disabled="form.processing">
+                                    {{ title }} Appointment
+                                </PrimaryButton>
                             </div>
                         </div>
                     </div>
@@ -177,4 +179,8 @@ const status = [
     </AppLayout>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.p-calendar {
+    width: 100%;
+}
+</style>

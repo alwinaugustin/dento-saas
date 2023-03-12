@@ -46,7 +46,7 @@ class AppointmentsController extends Controller
          if (!$id) {
             return Inertia::render('Appointments::Create');
         } else {
-            $appointment = Appointment::where(['id'=>$id])->get();
+            $appointment = Appointment::where(['id'=>$id])->with(['patient', 'doctor'])->get();
             return Inertia::render('Appointments::Create', [
                 'appointment'=>$appointment,
                 'token'=>csrf_token()

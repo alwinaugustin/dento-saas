@@ -67,55 +67,52 @@ const cancel = () => {
         </template>
         <form @submit.prevent="submit">
             <div class="py-2">
-                <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                        <div class="p-6 text-gray-900 dark:text-gray-100">
-                            <div class="p-2">
-                                <div class="grid grid-cols-3 gap-4 m-1">
-                                    <div class="col-span-2">
-                                        <InputLabel for="name" value="Name" />
-                                        <TextInput id="name" type="text" class="mt-1 block w-12" v-model="form.name"
-                                            required />
-                                    </div>
-                                    <div class="col-span-2">
-                                        <InputLabel for="email" value="Email" />
-                                        <TextInput id="email" type="text" class="mt-1 block w-12" v-model="form.email"
-                                            required />
-                                    </div>
-                                    <div class="col-span-2">
-                                        <InputLabel for="more_info" value="Contact Number" />
-                                        <TextInput id="contact_number" type="text" class="mt-1 block w-12"
-                                            v-model="form.contact_number" required />
-                                    </div>
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6 text-gray-900 dark:text-gray-100">
+                        <div class="p-2">
+                            <div class="grid grid-cols-3 gap-4 m-1">
+                                <div class="">
+                                    <InputLabel for="name" value="Name" />
+                                    <TextInput id="name" type="text" class="mt-1 block w-12" v-model="form.name" required />
+                                </div>
+                                <div class="">
+                                    <InputLabel for="email" value="Email" />
+                                    <TextInput id="email" type="text" class="mt-1 block w-12" v-model="form.email"
+                                        required />
+                                </div>
+                                <div class="">
+                                    <InputLabel for="more_info" value="Contact Number" />
+                                    <TextInput id="contact_number" type="text" class="mt-1 block w-12"
+                                        v-model="form.contact_number" required />
                                 </div>
                             </div>
-                            <div class="p-2">
-                                <div class="grid grid-cols-3 gap-4 m-1">
-                                    <div class="col-span-2">
-                                        <InputLabel for="speciality" value="Speciality" />
-                                        <TextInput id="speciality" type="text" class="mt-1 block w-12"
-                                            v-model="form.speciality" required />
-                                    </div>
-                                    <div class="col-span-2">
-                                        <InputLabel for="address" value="Address" />
-                                        <TextInput id="address" type="text" class="mt-1 block w-12" v-model="form.address"
-                                            required />
-                                    </div>
-                                    <div class="col-span-2">
-                                        <InputLabel for="more_info" value="More Info" />
-                                        <TextInput id="more_info" type="text" class="mt-1 block w-12"
-                                            v-model="form.more_info" required />
-                                    </div>
+                        </div>
+                        <div class="p-2">
+                            <div class="grid grid-cols-3 gap-4 m-1">
+                                <div class="">
+                                    <InputLabel for="speciality" value="Speciality" />
+                                    <TextInput id="speciality" type="text" class="mt-1 block w-12" v-model="form.speciality"
+                                        required />
+                                </div>
+                                <div class="">
+                                    <InputLabel for="address" value="Address" />
+                                    <TextInput id="address" type="text" class="mt-1 block w-12" v-model="form.address"
+                                        required />
+                                </div>
+                                <div class="">
+                                    <InputLabel for="more_info" value="More Info" />
+                                    <TextInput id="more_info" type="text" class="mt-1 block w-12" v-model="form.more_info"
+                                        required />
                                 </div>
                             </div>
-                            <div class="p-2">
-                                <div class="grid grid-cols-4 gap-6 m-1" style="justify-content: flex-end">
-                                    <SecondaryButton class="ml-2" @click="cancel()">Cancel</SecondaryButton>
-                                    <PrimaryButton class="ml-2" :class="{ 'opacity-25': form.processing }"
-                                        :disabled="form.processing">
-                                        {{ title }} Doctor
-                                    </PrimaryButton>
-                                </div>
+                        </div>
+                        <div class="p-2">
+                            <div class="flex justify-end">
+                                <SecondaryButton class="ml-2" @click="cancel()">Cancel</SecondaryButton>
+                                <PrimaryButton class="ml-2" :class="{ 'opacity-25': form.processing }"
+                                    :disabled="form.processing">
+                                    {{ title }} Doctor
+                                </PrimaryButton>
                             </div>
                         </div>
                     </div>

@@ -19,54 +19,52 @@
             </div>
         </template>
         <div class="py-2">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div v-if="$page.props.flash.notification" class="alert">
-                    {{ $page.props.flash.notification }}
-                </div>
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-2 text-gray-900 dark:text-gray-100">
-                        <div class="p-2">
-                            <DataTable :value="$page['props']['appointments']" responsiveLayout="scroll" :paginator="true"
-                                paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                                :rows="10" dataKey="id" :rowsPerPageOptions="[10, 25, 50]"
-                                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-                                :globalFilterFields="['name', 'patient_name', 'doctor_name', 'contact_number', 'purpose']"
-                                v-model:filters="filters" filterDisplay="menu">
-                                <template #header>
-                                    <div class="flex justify-content-right align-items-center">
-                                        <span class="p-input-icon-left">
-                                            <i class="pi pi-search" />
-                                            <InputText v-model="filters['global'].value" placeholder="Search" />
-                                        </span>
-                                    </div>
+            <div v-if="$page.props.flash.notification" class="alert">
+                {{ $page.props.flash.notification }}
+            </div>
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-2 text-gray-900 dark:text-gray-100">
+                    <div class="p-2">
+                        <DataTable :value="$page['props']['appointments']" responsiveLayout="scroll" :paginator="true"
+                            paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                            :rows="10" dataKey="id" :rowsPerPageOptions="[10, 25, 50]"
+                            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                            :globalFilterFields="['name', 'patient_name', 'doctor_name', 'contact_number', 'purpose']"
+                            v-model:filters="filters" filterDisplay="menu">
+                            <template #header>
+                                <div class="flex justify-content-right align-items-center">
+                                    <span class="p-input-icon-left">
+                                        <i class="pi pi-search" />
+                                        <InputText v-model="filters['global'].value" placeholder="Search" />
+                                    </span>
+                                </div>
+                            </template>
+                            <template #empty>
+                                No doctros found.
+                            </template>
+                            <Column field="patient_name" header="Patient Name" :sortable="true"></Column>
+                            <Column field="contact_number" header="Contact Number" :sortable="true"></Column>
+                            <Column field="doctor_name" header="Doctor Name" :sortable="true"></Column>
+                            <Column field="purpose" header="Purpose" :sortable="true"></Column>
+                            <Column field="appointment_time" header="Time" :sortable="true"></Column>
+                            <Column header="Status">
+                                <template #body="{ data }">
+                                    <span :class="'customer-badge status-' + data.status">{{ data.status }}</span>
                                 </template>
-                                <template #empty>
-                                    No doctros found.
+                            </Column>
+                            <Column header="Actions">
+                                <template #body="slotProps">
+                                    <span>
+                                        &nbsp;&nbsp;
+                                        <a :href="'appointments/edit/' + slotProps.data.id">
+                                            <i class="pi pi-file-edit"></i>
+                                        </a>
+
+                                        <!-- <a href="#" @click="delete ('id')"><i class="pi pi-trash"></i></a> -->
+                                    </span>
                                 </template>
-                                <Column field="patient_name" header="Patient Name" :sortable="true"></Column>
-                                <!-- <Column field="patient_id" header="Patient ID" :sortable="true"></Column> -->
-                                <Column field="contact_number" header="Contact Number" :sortable="true"></Column>
-                                <Column field="doctor_name" header="Doctor Name" :sortable="true"></Column>
-                                <Column field="purpose" header="Purpose" :sortable="true"></Column>
-                                <Column field="appointment_time" header="Time" :sortable="true"></Column>
-                                <Column header="Status">
-                                    <template #body="{ data }">
-                                        <span :class="'customer-badge status-' + data.status">{{ data.status }}</span>
-                                    </template>
-                                </Column>
-                                <Column header="Actions">
-                                    <template #body="slotProps">
-                                        <span>
-                                            <a :href="'appointments/edit/' + slotProps.data.id">
-                                                <i class="pi pi-user-edit"></i>
-                                            </a>
-                                            &nbsp;&nbsp;
-                                            <a href="#" @click="delete ('id')"><i class="pi pi-trash"></i></a>
-                                        </span>
-                                    </template>
-                                </Column>
-                            </DataTable>
-                        </div>
+                            </Column>
+                        </DataTable>
                     </div>
                 </div>
             </div>

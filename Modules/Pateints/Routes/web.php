@@ -17,5 +17,6 @@ Route::prefix('pateints')->group(function() {
     Route::get('/create', 'PateintsController@create')->name('patients/create');
     Route::post('/create', 'PateintsController@store')->name('pateints/create');
     Route::get('/edit/{id}', 'PateintsController@create')->name('patients/edit');
+    Route::get('/{id}', 'PateintsController@show')->name('patients/show');
     Route::post('/upload', 'PateintsController@upload')->name('pateints/upload');
 });
