@@ -8,7 +8,7 @@
                 <div>
                     <span class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Appointments</span>
                     <span class="h-fit min-h-full flex justify-end" style="margin-top: -24px;">
-                        <a href="/appointments/create">
+                        <a @click="create()">
                             <PrimaryButton class="ml-2 float-right" type="button">
                                 <i class="pi pi-plus"></i>&nbsp;
                                 Add Appointment
@@ -40,7 +40,7 @@
                                 </div>
                             </template>
                             <template #empty>
-                                No doctros found.
+                                No appointments found.
                             </template>
                             <Column field="patient_name" header="Patient Name" :sortable="true"></Column>
                             <Column field="contact_number" header="Contact Number" :sortable="true"></Column>
@@ -72,7 +72,7 @@
     </AppLayout>
 </template>
 <script>
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
@@ -122,6 +122,9 @@ export default {
                 }
             });
         },
+        create() {
+            router.get('/appointments/create')
+        }
     }
 }
 

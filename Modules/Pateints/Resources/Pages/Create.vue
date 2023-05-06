@@ -6,112 +6,81 @@ import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import Dropdown from 'primevue/dropdown';
 import * as states from '../assets/js/states';
-import * as medical_conditions from '../assets/js/medical_conditions';
+import medical_conditions from '../assets/js/medical_conditions';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { router } from '@inertiajs/vue3';
 import { reactive } from 'vue';
 import FileUpload from 'primevue/fileupload';
 import Textarea from 'primevue/textarea';
 import MultiSelect from 'primevue/multiselect';
+import { ref } from 'vue';
 
 defineProps({
     errors: Object,
     id: null
 });
-
-let patient = null;
-
-const conditions = [
-    { label: "Hyper Tension", value: "Hyper Tension" }
-]
-
-let form = reactive({
-    id: usePage().props.patient_id,
-    prefix: null,
-    name: null,
-    gender: null,
-    age: null,
-    blood_group: null,
-    marital_status: null,
-    contact_number: null,
-    email_id: null,
-    immediate_contact: null,
-    contact_relation: null,
-    address: null,
-    address_2: null,
-    city: null,
-    state: null,
-    postal_code: null,
-    referred_by: null,
-    medical_conditions: null,
-    additional_info: null
+const patient = usePage().props.patient?.[0];
+const form = reactive({
+    id: patient?.id || usePage().props.patient_id,
+    prefix: patient?.prefix || null,
+    name: patient?.name || null,
+    gender: patient?.gender || null,
+    age: patient?.age || null,
+    blood_group: patient?.blood_group || null,
+    marital_status: patient?.marital_status || null,
+    contact_number: patient?.contact_number || null,
+    email_id: patient?.email_id || null,
+    immediate_contact: patient?.immediate_contact || null,
+    contact_relation: patient?.contact_relation || null,
+    address: patient?.address || null,
+    address_2: patient?.address_2 || null,
+    city: patient?.city || null,
+    state: patient?.state || null,
+    postal_code: patient?.postal_code || null,
+    referred_by: patient?.referred_by || null,
+    medical_conditions: patient?.medical_conditions?.split(',') || null,
+    additional_info: patient?.additional_info || null,
+    patient_file: patient?.patient_file || null
 });
-
-if (usePage().props.patient) {
-    patient = usePage().props.patient[0];
-    form = reactive({
-        id: patient.id ? patient.id : null,
-        prefix: patient.prefix ? patient.prefix : null,
-        name: patient.name ? patient.name : null,
-        gender: patient.gender ? patient.gender : null,
-        age: patient.age ? patient.age : null,
-        blood_group: patient.blood_group ? patient.blood_group : null,
-        marital_status: patient.marital_status ? patient.marital_status : null,
-        contact_number: patient.contact_number ? patient.contact_number : null,
-        email_id: patient.email_id ? patient.email_id : null,
-        immediate_contact: patient.immediate_contact ? patient.immediate_contact : null,
-        contact_relation: patient.contact_relation ? patient.contact_relation : null,
-        address: patient.address ? patient.address : null,
-        address_2: patient.address_2 ? patient.address_2 : null,
-        city: patient.city ? patient.city : null,
-        state: patient.state ? patient.state : null,
-        postal_code: patient.postal_code ? patient.postal_code : null,
-        referred_by: patient.referred_by ? patient.referred_by : null,
-        medical_conditions: patient.medical_conditions ? patient.medical_conditions : null,
-        additional_info: patient.additional_info ? patient.additional_info : null
-    });
-}
 
 const title = patient ? 'Update' : 'Add';
 
-const gender = [
-    { name: 'Male', value: 'male' },
-    { name: 'Female', value: 'female' },
-    { name: 'Others', value: 'others' }
-];
-const bloodGroups = [
+const gender = ref([
+    { name: 'Male', value: 'Male' },
+    { name: 'Female', value: 'Female' },
+    { name: 'Others', value: 'Others' }
+]);
+
+const bloodGroups = ref([
     { name: 'O+', value: 'O+' },
     { name: 'O-', value: 'O-' },
     { name: 'A+', value: 'A+' },
     { name: 'A-', value: 'A-' },
     { name: 'B+', value: 'B+' },
     { name: 'B-', value: 'B-' }
-];
-const maritalStatus = [
-    { name: 'Married', value: 'married' },
-    { name: 'Un Married', value: 'unmarried' },
-    { name: 'Divorced', value: 'divorced' }
-];
-const prefixes = [
-    { name: 'Ms', value: 'ms' },
-    { name: 'Mr.', value: 'mr' },
-    { name: 'Mrs.', value: 'mrs' },
-    { name: 'Dr.', value: 'mrs' }
-];
+]);
 
+const maritalStatus = ref([
+    { name: 'Married', value: 'Married' },
+    { name: 'Un Married', value: 'Un Married' },
+]);
+
+const prefixes = ref([
+    { name: 'Mr.', value: 'Mr.' },
+    { name: 'Ms.', value: 'Ms.' },
+    { name: 'Mrs.', value: 'Mrs.' },
+    { name: 'Dr.', value: 'Dr.' }
+]);
+const { data, errors, post, processing } = useForm({
+    ...form,
+    // medical_conditions: form.medical_conditions?.split(',') || []
+});
 const submit = () => {
     router.post('/pateints/create', form)
 };
 const cancel = () => {
     Object.assign(form, form)
     router.get('/pateints')
-}
-const onUpload = () => {
-    console.log("HERE");
-}
-const addHeader = (event) => {
-    console.log(usePage().props);
-    event.formData._token = usePage().props.token
 }
 </script>
 <template>
@@ -130,12 +99,12 @@ const addHeader = (event) => {
                 </div>
             </div>
         </template>
-        <form @submit.prevent="submit">
-            <div class="py-2">
+        <form @submit.prevent="submit" enctype="multipart/form-data">
+            <div class="py-1 form_wrapper">
                 <div class="bg-white dark:bg-gray-800 sm:rounded-lg">
-                    <div class="p-6 text-gray-900 dark:text-gray-100">
-                        <div class="p-2">
-                            <div class="grid grid-cols-2 md:grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 gap-4 m-1">
+                    <div class="p-1 text-gray-900 dark:text-gray-100">
+                        <div class="p-1">
+                            <div class="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-1 lg:grid-cols-3 gap-4 m-1">
                                 <div>
                                     <InputLabel for="prefix" value="Prefix" />
                                     <Dropdown v-model="form.prefix" :options="prefixes" optionLabel="name"
@@ -151,8 +120,8 @@ const addHeader = (event) => {
                                 </div>
                             </div>
                         </div>
-                        <div class="p-2">
-                            <div class="grid grid-cols-2 md:grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 gap-4 m-1">
+                        <div class="p-1">
+                            <div class="grid grid-cols-1 md:grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 m-1">
                                 <div>
                                     <InputLabel for="prefix" value="Gender" />
                                     <Dropdown v-model="form.gender" :options="gender" optionLabel="name" optionValue="value"
@@ -169,8 +138,9 @@ const addHeader = (event) => {
                                 </div>
                             </div>
                         </div>
-                        <div class="p-2">
-                            <div class="grid grid-cols-4 md:grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 gap-4 m-1">
+                        <div class="p-1">
+                            <div
+                                class="grid grid-cols-1 md:grid-cols-2 md:grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 gap-4 m-1">
                                 <div>
                                     <InputLabel for="id" value="Marital Status" />
                                     <Dropdown v-model="form.marital_status" :options="maritalStatus" optionLabel="name"
@@ -188,8 +158,8 @@ const addHeader = (event) => {
                                 </div>
                             </div>
                         </div>
-                        <div class="p-2">
-                            <div class="grid grid-cols-4 md:grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 gap-4 m-1">
+                        <div class="p-1">
+                            <div class="grid grid-cols-1 md:grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 gap-4 m-1">
                                 <div class="">
                                     <InputLabel for="immediate_contact" value="Immedeate Contact Number" />
                                     <TextInput id="immediate_contact" type="text" class="mt-1 block w-12"
@@ -207,8 +177,8 @@ const addHeader = (event) => {
                                 </div>
                             </div>
                         </div>
-                        <div class="p-2">
-                            <div class="grid grid-cols-4 md:grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 gap-4 m-1">
+                        <div class="p-1">
+                            <div class="grid grid-cols-1 md:grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 gap-4 m-1">
                                 <div class="">
                                     <InputLabel for="address_2" value="Apartment" />
                                     <TextInput id="address_2" type="text" class="mt-1 block w-12" v-model="form.address_2"
@@ -228,8 +198,8 @@ const addHeader = (event) => {
                                 </div>
                             </div>
                         </div>
-                        <div class="p-2">
-                            <div class="grid grid-cols-4 md:grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 gap-4 m-1">
+                        <div class="p-1">
+                            <div class="grid grid-cols-1 md:grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 gap-4 m-1">
                                 <div class="">
                                     <InputLabel for="postal_code" value="Postal Code" />
                                     <TextInput id="postal_code" type="text" class="mt-1 block w-12"
@@ -243,25 +213,26 @@ const addHeader = (event) => {
                                 </div>
                                 <div class="">
                                     <InputLabel for="medical_condition" value="Medical Condition" />
-                                    <MultiSelect v-model="form.medical_conditions" :options="conditions" />
-                                    optionLabel="label" :option-value="value" placeholder="Select" /> -->
+                                    <MultiSelect v-model="form.medical_conditions" :options="medical_conditions"
+                                        placeholder="Select" display="chip" class="w-full md:w-36rem" />
                                 </div>
                             </div>
                         </div>
-                        <div class="p-2">
-                            <div class="grid grid-cols-3 md:grid-cols-3 gap-4 m-1">
+                        <div class="p-1">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 m-1">
                                 <div class="">
                                     <InputLabel for="address" value="Additional Info" />
-                                    <Textarea v-model="form.additional_info" cols="40" />
+                                    <Textarea v-model="form.additional_info" cols="43" class="mt-1" />
                                 </div>
                                 <div class="">
-                                    <InputLabel for="patient_file" value="Upload Files" />
-                                    <FileUpload mode="basic" name="patient_file" url="/pateints/upload" :multiple="true"
-                                        @upload="onUpload" :auto="true" @before-upload="addHeader" />
+                                    <InputLabel for="patient_file" value="Upload Medical Record" />
+                                    <input
+                                        class="relative mt-4 block w-full min-w-0 flex-auto rounded bg-clip-padding py-[0.32rem] px-3 text-lg font-normal text-neutral-700 transition duration-300 ease-in-out file:-mx-3 file:-my-[0.32rem] file:overflow-hidden file:rounded-none file:border-0 file:border-solid file:border-inherit file:bg-neutral-100 file:px-3 file:py-[0.32rem] file:text-neutral-700 file:transition file:duration-150 file:ease-in-out file:[margin-inline-end:0.75rem] file:[border-inline-end-width:1px] hover:file:bg-neutral-200 focus:border-primary focus:text-neutral-700 focus:shadow-[0_0_0_1px] focus:shadow-primary focus:outline-none dark:border-neutral-600 dark:text-neutral-200 dark:file:bg-neutral-700 dark:file:text-neutral-100"
+                                        type="file" @input="form.patient_file = $event.target.files[0]" />
                                 </div>
                             </div>
                         </div>
-                        <div class="p-2">
+                        <div class="p-1">
                             <div class="flex justify-end">
                                 <SecondaryButton class="ml-2" @click="cancel()">Cancel</SecondaryButton>
                                 <PrimaryButton class="ml-2" :class="{ 'opacity-25': form.processing }"

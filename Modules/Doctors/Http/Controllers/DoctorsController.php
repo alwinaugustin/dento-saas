@@ -70,8 +70,11 @@ class DoctorsController extends Controller
      * @param int $id
      * @return Renderable
      */
-    public function destroy($id)
+    public function delete($id)
     {
-        //
+        $doctor = Doctor::findOrFail($id);
+        $doctor->delete();
+
+        return redirect('/doctors')->with('message','Doctor deleted successfully');
     }
 }

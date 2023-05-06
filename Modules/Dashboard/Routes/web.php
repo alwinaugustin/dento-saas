@@ -10,8 +10,10 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::prefix('dashboard')->group(function() {
-    Route::get('/', 'DashboardController@index')->name('dashboard');
-    Route::get('/create', 'DashboardController@create')->name('create');
+Route::middleware('auth')->group(function () {
+    Route::prefix('dashboard')->group(function() {
+        Route::get('/', 'DashboardController@index')->name('dashboard');
+        Route::get('/create', 'DashboardController@create')->name('create');
+    });
 });
+

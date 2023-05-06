@@ -34,17 +34,16 @@ let form = reactive({
 
 if (usePage().props.appointment) {
     appointment = usePage().props.appointment[0];
-    console.log(appointment);
-    form = reactive({
-        id: appointment.id ? appointment.id : null,
-        patient_id: appointment.patient_id ? appointment.patient_id : null,
-        doctor_id: appointment.doctor_id ? appointment.doctor_id : null,
-        contact_number: appointment['patient'].contact_number ? appointment['patient'].contact_number : null,
-        gender: appointment['patient'].gender ? appointment['patient'].gender : null,
-        purpose: appointment.purpose ? appointment.purpose : null,
-        appointment_time: appointment.appointment_time ? appointment.appointment_time : null,
-        additional_information: appointment.additional_information ? appointment.additional_information : null,
-        status: appointment.status ? appointment.status : null,
+    const form = reactive({
+        id: appointment.id ?? null,
+        patient_id: appointment.patient_id ?? null,
+        doctor_id: appointment.doctor_id ?? null,
+        contact_number: appointment.patient?.contact_number ?? null,
+        gender: appointment.patient?.gender ?? null,
+        purpose: appointment.purpose ?? null,
+        appointment_time: appointment.appointment_time ?? null,
+        additional_information: appointment.additional_information ?? null,
+        status: appointment.status ?? null,
     });
 }
 
@@ -105,9 +104,9 @@ const status = [
         <form @submit.prevent="submit">
             <div class="py-2">
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900 dark:text-gray-100">
+                    <div class="p-1 text-gray-900 dark:text-gray-100">
                         <div class="p-2">
-                            <div class="grid grid-cols-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 m-1">
+                            <div class="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-1 lg:grid-cols-4 gap-4 m-1">
                                 <div class="">
                                     <InputLabel for="patient_id" value="Patient" />
                                     <Dropdown v-model="form.patient_id" :options="patients" optionLabel="name"
@@ -132,7 +131,7 @@ const status = [
                             </div>
                         </div>
                         <div class="p-2">
-                            <div class="grid grid-cols-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 m-1">
+                            <div class="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-1 lg:grid-cols-4 gap-4 m-1">
                                 <div class="">
                                     <InputLabel for="doctor_id" value="Doctor" />
                                     <Dropdown v-model="form.doctor_id" :options="doctors" optionLabel="name"
@@ -156,7 +155,7 @@ const status = [
                             </div>
                         </div>
                         <div class="p-2">
-                            <div class="grid grid-cols-3 gap-4 m-1">
+                            <div class="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-1 lg:grid-cols-3 gap-4 m-1">
                                 <div class="col-span-12">
                                     <InputLabel for="purpose" value="Additional Info" />
                                     <Textarea v-model="form.additional_information" rows="5" cols="70" />
@@ -178,9 +177,3 @@ const status = [
         </form>
     </AppLayout>
 </template>
-
-<style lang="scss" scoped>
-.p-calendar {
-    width: 100%;
-}
-</style>

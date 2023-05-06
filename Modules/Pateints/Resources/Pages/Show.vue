@@ -7,9 +7,9 @@
             <!-- <div>
                 <Breadcrumb :home="home" :model="items" />
             </div> -->
-            <div class="p-2">
+            <div class="pl-3">
                 <div>
-                    <span class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">{{ patient.name
+                    <span class="font-semibold text-2xl text-gray-800 dark:text-gray-200 leading-tight">{{ patient.name
                     }}</span>
                 </div>
             </div>
@@ -25,16 +25,16 @@
                             <template #content>
                                 <div class="flex flex-row">
                                     <div class="basis-1/3">
-                                        <div class="m-2 font-bold text-gray-700 rounded-full bg-slate-300 flex items-center justify-center font-mono"
+                                        <div class="m-2 font-semibold text-gray-700 rounded-full bg-slate-300 flex items-center justify-center font-mono"
                                             style="height: 60px; width: 60px; font-size: 30px;">
                                             {{ patient.name.split(" ").map((n) => n[0]).join("") }}
                                         </div>
                                     </div>
                                     <div class="basis-1/2 mt-3">
-                                        <div class="text-lg font-bold"> {{ $page['props']['patient'].name }}</div>
+                                        <div class="text-2xl "> {{ patient.name }}</div>
                                         <div>
-                                            <span class="text-slate-500">Patient ID:</span>
-                                            <span>{{ patient.id }}</span>
+                                            <span class="text-sm text-slate-500">Patient ID:</span>
+                                            <span class="text-sm text-slate-500">{{ patient.id }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -42,58 +42,58 @@
                                     <div class="flex flex-row">
                                         <div class="basis-1/2">
                                             <div class="mt-4">
-                                                <label class="font-bold text-sm">Gender</label>
-                                                <div>{{ patient.gender }}</div>
+                                                <label class="font-semibold text-sm">Gender</label>
+                                                <div class="text-sm">{{ patient.gender }}</div>
                                             </div>
                                             <div class="mt-4">
-                                                <label class="font-bold text-sm">Blood Group</label>
-                                                <div>{{ patient.blood_group }}</div>
+                                                <label class="font-semibold text-sm">Blood Group</label>
+                                                <div class="text-sm">{{ patient.blood_group }}</div>
                                             </div>
                                             <div class="mt-4">
-                                                <label class="font-bold text-sm">Contact Number</label>
-                                                <div>{{ patient.contact_number }}</div>
+                                                <label class="font-semibold text-sm">Contact Number</label>
+                                                <div class="text-sm">{{ patient.contact_number }}</div>
                                             </div>
                                             <div class="mt-4">
-                                                <label class="font-bold text-sm">Imm. Contact</label>
-                                                <div>{{ patient.immediate_contact }}</div>
+                                                <label class="font-semibold text-sm">Imm. Contact</label>
+                                                <div class="text-sm">{{ patient.immediate_contact }}</div>
                                             </div>
                                             <div class="mt-4">
-                                                <label class="font-bold text-sm">Address</label>
-                                                <div>{{ patient.immediate_contact }}</div>
+                                                <label class="font-semibold text-sm">Address</label>
+                                                <div class="text-sm">{{ patient.immediate_contact }}</div>
                                             </div>
                                             <div class="mt-4">
-                                                <label class="font-bold text-sm">City</label>
-                                                <div>{{ patient.city }}</div>
+                                                <label class="font-semibold text-sm">City</label>
+                                                <div class="text-sm">{{ patient.city }}</div>
                                             </div>
                                             <div class="mt-4">
-                                                <label class="font-bold text-sm">Zip</label>
-                                                <div>{{ patient.postal_code }}</div>
+                                                <label class="font-semibold text-sm">Zip</label>
+                                                <div class="text-sm">{{ patient.postal_code }}</div>
                                             </div>
                                         </div>
                                         <div class="basis-1/2 gap-2">
                                             <div class="mt-4">
-                                                <label class="font-bold text-sm">Age</label>
-                                                <div>{{ patient.age }}</div>
+                                                <label class="font-semibold text-sm">Age</label>
+                                                <div class="text-sm">{{ patient.age }}</div>
                                             </div>
                                             <div class="mt-4">
-                                                <label class="font-bold text-sm">Martial status</label>
-                                                <div>{{ patient.marital_status }}</div>
+                                                <label class="font-semibold text-sm">Martial status</label>
+                                                <div class="text-sm">{{ patient.marital_status }}</div>
                                             </div>
                                             <div class="mt-4">
-                                                <label class="font-bold text-sm">Email ID</label>
-                                                <div>{{ patient.email_id }}</div>
+                                                <label class="font-semibold text-sm">Email ID</label>
+                                                <div class="text-sm">{{ patient.email_id }}</div>
                                             </div>
                                             <div class="mt-4">
-                                                <label class="font-bold text-sm">Contact Relation</label>
-                                                <div>{{ patient.contact_relation }}</div>
+                                                <label class="font-semibold text-sm">Contact Relation</label>
+                                                <div class="text-sm">{{ patient.contact_relation }}</div>
                                             </div>
                                             <div class="mt-4">
-                                                <label class="font-bold text-sm">Apartment</label>
-                                                <div>{{ patient.address_2 }}</div>
+                                                <label class="font-semibold text-sm">Apartment</label>
+                                                <div class="text-sm">{{ patient.address_2 }}</div>
                                             </div>
                                             <div class="mt-4">
-                                                <label class="font-bold text-sm">State</label>
-                                                <div>{{ patient.state }}</div>
+                                                <label class="font-semibold text-sm">State</label>
+                                                <div class="text-sm">{{ patient.state }}</div>
                                             </div>
                                         </div>
                                     </div>
@@ -132,14 +132,17 @@
                                                 <div class="">
                                                     <label>&nbsp;</label>
                                                     <div>
-                                                        <Badge severity="success">{{ appointment.status }}</Badge>
+                                                        <!-- <Badge severity="success">{{ appointment.status }}</Badge> -->
+                                                        <span :class="'customer-badge status-' + appointment.status">{{
+                                                            appointment.status }}</span>
                                                     </div>
                                                 </div>
                                                 <div class="">
                                                     <label>&nbsp;</label>
                                                     <div>
                                                         <span>
-                                                            <a href="#"><i class="pi pi-ellipsis-v" @click="toggle"></i></a>
+                                                            <a href="#"><i class="pi pi-ellipsis-v"
+                                                                    @click="toggle($event, appointment.id)"></i></a>
                                                         </span>
                                                         <Menu ref="menu" :model="items" :popup="true" />
                                                     </div>
@@ -151,17 +154,10 @@
                             </TabPanel>
                             <TabPanel header="Records">
                                 <div class="card flex md:justify-content-center">
-                                    <!-- <Menu :model="items" /> -->
+                                    <div>
+
+                                    </div>
                                 </div>
-                                <p>
-                                    Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium
-                                    doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore
-                                    veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim
-                                    ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia
-                                    consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
-                                    Consectetur,
-                                    adipisci velit, sed quia non numquam eius modi.
-                                </p>
                             </TabPanel>
                         </TabView>
                     </div>
@@ -177,7 +173,7 @@
                                 <div>
                                     <InputLabel for="appointment_time" value="Date and Time" />
                                     <Calendar inputId="appointment_time" v-model="form.appointment_time" :showTime="true"
-                                        :showSeconds="false" hourFormat="12" />
+                                        :showSeconds="false" hourFormat="12" dateFormat="dd-mm-yy" />
                                 </div>
                             </div>
                             <div class="p-2">
@@ -210,7 +206,6 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import PrimaryButton from '@/Components/PrimaryButton.vue';
-import SecondaryButton from '@/Components/SecondaryButton.vue';
 import ConfirmDialog from 'primevue/confirmdialog';
 import Button from 'primevue/button';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
@@ -244,9 +239,12 @@ export default {
                     label: 'Reschedule',
                     command: (event) => {
                         this.rescheduleVisible = true
-                        console.log();
-                        this.form.appointment_time = this.patient.appointments.appointment_time
-                        this.form.doctor_id = this.patient.appointments.doctor_id
+                        const appointment = this.patient.appointments.find(appointment => appointment.id === this.selected);
+                        if (appointment) {
+                            const formattedTime = moment(appointment.appointment_time).format('YYYY-MM-DD HH:mm');
+                            this.form.appointment_time = formattedTime;
+                            this.form.doctor_id = appointment.doctor_id;
+                        }
                     },
                 },
                 { label: 'Mark Completed' },
@@ -254,7 +252,8 @@ export default {
                 { label: 'Generate Bill' },
                 { label: 'Set Reminder' },
                 { label: 'Send Message' },
-            ]
+            ],
+            selected: null,
         }
     },
     props: {
@@ -303,8 +302,9 @@ export default {
                 }
             });
         },
-        toggle(event) {
-            console.log(event)
+        toggle(event, appointment_id) {
+            console.log(appointment_id);
+            this.selected = appointment_id;
             this.$refs.menu[0].toggle(event);
         }
     }

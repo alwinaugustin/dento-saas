@@ -8,7 +8,7 @@
                 <div>
                     <span class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Doctors</span>
                     <span class="h-fit min-h-full flex justify-end" style="margin-top: -24px;">
-                        <a href="/doctors/create">
+                        <a @click="create()">
                             <PrimaryButton class="ml-2 float-right" type="button">
                                 <i class="pi pi-plus"></i>&nbsp;
                                 Add Doctor
@@ -46,7 +46,21 @@
                             <Column field="contact_number" header="Contact Number" :sortable="true"></Column>
                             <Column field="email" header="Email" :sortable="true"></Column>
                             <Column field="speciality" header="Speciality" :sortable="true"></Column>
-                            <Column header="Actions">
+                            <Column header="">
+                                <template #body="slotProps">
+                                    <div class="">
+                                        <label>&nbsp;</label>
+                                        <div>
+                                            <span>
+                                                <a href="#"><i class="pi pi-ellipsis-v"
+                                                        @click="toggle($event, slotProps.data.id)"></i></a>
+                                            </span>
+                                            <Menu ref="menu" :model="items" :popup="true" />
+                                        </div>
+                                    </div>
+                                </template>
+                            </Column>
+                            <!-- <Column header="Actions">
                                 <template #body="slotProps">
                                     <span>
                                         <a :href="'doctors/edit/' + slotProps.data.id">
@@ -56,7 +70,7 @@
                                         <a href="#" @click="delete ('id')"><i class="pi pi-trash"></i></a>
                                     </span>
                                 </template>
-                            </Column>
+                            </Column> -->
                         </DataTable>
                     </div>
                 </div>
@@ -65,7 +79,7 @@
     </AppLayout>
 </template>
 <script>
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
@@ -74,13 +88,46 @@ import ConfirmDialog from 'primevue/confirmdialog';
 import Button from 'primevue/button';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import InputText from 'primevue/inputtext';
+import Menu from 'primevue/menu';
 
 export default {
     data() {
         return {
             filters: {
                 "global": { value: null, matchMode: FilterMatchMode.CONTAINS }
-            }
+            },
+            items: [
+                {
+                    label: 'Edit',
+                    icon: 'pi pi-user-edit',
+                    command: (event) => {
+                        router.get('/doctors/edit/' + this.selected)
+                    }
+                },
+                {
+                    label: 'Delete',
+                    icon: 'pi pi-trash',
+                    command: (event) => {
+                        this.$confirm.require({
+                            message: 'Are you sure you want to proceed?',
+                            header: 'Confirmation',
+                            icon: 'pi pi-exclamation-triangle',
+                            accept: () => {
+                                this.delete(this.selected)
+                            },
+                            reject: () => {
+                                //callback to execute when user rejects the action
+                            },
+                            onShow: () => {
+                                //callback to execute when dialog is shown
+                            },
+                            onHide: () => {
+                                //callback to execute when dialog is hidden
+                            }
+                        });
+                    }
+                }
+            ],
         }
     },
     components: {
@@ -92,29 +139,21 @@ export default {
         ConfirmDialog,
         Button,
         FilterMatchMode,
-        InputText
+        InputText,
+        Menu
     },
     methods: {
-        delete() {
-            this.$confirm.require({
-                message: 'Are you sure you want to proceed?',
-                header: 'Confirmation',
-                icon: 'pi pi-exclamation-triangle',
-                accept: () => {
-                    console.log("HERE");
-                    //callback to execute when user confirms the action
-                },
-                reject: () => {
-                    //callback to execute when user rejects the action
-                },
-                onShow: () => {
-                    //callback to execute when dialog is shown
-                },
-                onHide: () => {
-                    //callback to execute when dialog is hidden
-                }
-            });
+        toggle(event, doctor_id) {
+            this.selected = doctor_id;
+            console.log(this.$refs.menu)
+            this.$refs.menu.toggle(event);
         },
+        delete(id) {
+            this.$inertia.delete(route('doctors/delete', id));
+        },
+        create() {
+            router.get('/doctors/create')
+        }
     }
 }
 

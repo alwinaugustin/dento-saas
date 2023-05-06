@@ -11,9 +11,11 @@
 |
 */
 
-Route::prefix('appointments')->group(function() {
-    Route::get('/', 'AppointmentsController@index')->name('appointments/index');
-    Route::get('/create', 'AppointmentsController@create')->name('appointments/create');
-    Route::post('/create', 'AppointmentsController@store')->name('appointments/create');
-    Route::get('/edit/{id}', 'AppointmentsController@create')->name('appointments/edit');
+Route::middleware('auth')->group(function () {
+    Route::prefix('appointments')->group(function() {
+        Route::get('/', 'AppointmentsController@index')->name('appointments/index');
+        Route::get('/create', 'AppointmentsController@create')->name('appointments/create');
+        Route::post('/create', 'AppointmentsController@store')->name('appointments/create');
+        Route::get('/edit/{id}', 'AppointmentsController@create')->name('appointments/edit');
+    });
 });

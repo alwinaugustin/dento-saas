@@ -8,6 +8,7 @@ use Illuminate\Routing\Controller;
 use Inertia\Inertia;
 use Modules\Pateints\Entities\Patient;
 use Modules\Doctors\Entities\Doctor;
+use  Modules\Appointments\Entities\Appointment;
 
 
 class PateintsController extends Controller
@@ -19,7 +20,7 @@ class PateintsController extends Controller
     public function index()
     {
         return Inertia::render('Pateints::Index', [
-            'patients'      => Patient::all()
+            'patients' => Patient::all()
         ]);
     }
 
@@ -31,7 +32,7 @@ class PateintsController extends Controller
     {
         if (!$id) {
             return Inertia::render('Pateints::Create', [
-                'patient_id'=>Patient::max('id')+1,
+                'patient_id'=>Patient::withTrashed()->max('id')+1,
                 'token'=>csrf_token()
             ]);
         } else {
@@ -50,6 +51,20 @@ class PateintsController extends Controller
      */
     public function store(Request $request)
     {
+        if($request->get('id')) {
+            $path = 'uploads/'.$request->get('id');
+        } else {
+            $path = 'uploads/'.Patient::max('id')+1;
+        }
+
+       $pateintFile = $request->file('patient_file');
+       $fileName    = time().'_'.$pateintFile->getClientOriginalName();
+       $filePath    = $pateintFile->storeAs($path, $fileName, 'public');
+
+       $request['patient_file_path']       = $filePath;
+       $request['medical_conditions'] = implode(',', $request['medical_conditions']);
+      // dd($request->all());
+
         $patient = Patient::updateOrCreate([
             'id'=>$request->get('id')
         ], $request->validate(
@@ -69,10 +84,12 @@ class PateintsController extends Controller
                 'city'              =>'required|max:50',
                 'state'             =>'required|max:50',
                 'postal_code'       =>'required|numeric',
-                'referred_by'       =>'alpha'
+                'referred_by'       =>'alpha',
+                'medical_conditions' => 'string',
+                'patient_file_path'      =>'string'
         ]));
 
-        return redirect('/pateints')->with('notification','Patient Added Successfully');
+        return redirect('/pateints')->with('message','Patient Added Successfully');
     }
 
     public function show($id)
@@ -111,8 +128,13 @@ class PateintsController extends Controller
      * @param int $id
      * @return Renderable
      */
-    public function destroy($id)
+    public function delete($id)
     {
-        //
+        // $appointment = Appointment::where('patient_id')->get();
+        // $appointment->delete();
+        $patient = Patient::findOrFail($id);
+        $patient->delete();
+
+        return redirect('/pateints')->with('message','Patient deleted successfully');
     }
 }

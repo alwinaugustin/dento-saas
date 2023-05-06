@@ -45,8 +45,8 @@ const submit = () => {
     router.post('/doctors/create', form)
 };
 const cancel = () => {
-    form.reset();
-    router.get('/', form)
+    Object.assign(form, form)
+    router.get('/doctors')
 }
 </script>
 <template>
@@ -68,9 +68,9 @@ const cancel = () => {
         <form @submit.prevent="submit">
             <div class="py-2">
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900 dark:text-gray-100">
+                    <div class="p-1 text-gray-900 dark:text-gray-100">
                         <div class="p-2">
-                            <div class="grid grid-cols-3 gap-4 m-1">
+                            <div class="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-1 lg:grid-cols-3 gap-4 m-1">
                                 <div class="">
                                     <InputLabel for="name" value="Name" />
                                     <TextInput id="name" type="text" class="mt-1 block w-12" v-model="form.name" required />
@@ -88,7 +88,7 @@ const cancel = () => {
                             </div>
                         </div>
                         <div class="p-2">
-                            <div class="grid grid-cols-3 gap-4 m-1">
+                            <div class="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-1 lg:grid-cols-3 gap-4 m-1">
                                 <div class="">
                                     <InputLabel for="speciality" value="Speciality" />
                                     <TextInput id="speciality" type="text" class="mt-1 block w-12" v-model="form.speciality"
@@ -107,12 +107,14 @@ const cancel = () => {
                             </div>
                         </div>
                         <div class="p-2">
-                            <div class="flex justify-end">
-                                <SecondaryButton class="ml-2" @click="cancel()">Cancel</SecondaryButton>
-                                <PrimaryButton class="ml-2" :class="{ 'opacity-25': form.processing }"
-                                    :disabled="form.processing">
-                                    {{ title }} Doctor
-                                </PrimaryButton>
+                            <div class="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-1 lg:grid-cols-1 gap-4 m-1">
+                                <div class="flex justify-end">
+                                    <SecondaryButton class="ml-2" @click="cancel()">Cancel</SecondaryButton>
+                                    <PrimaryButton class="ml-2" :class="{ 'opacity-25': form.processing }"
+                                        :disabled="form.processing">
+                                        {{ title }} Doctor
+                                    </PrimaryButton>
+                                </div>
                             </div>
                         </div>
                     </div>

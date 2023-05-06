@@ -1,14 +1,13 @@
 <template>
     <ConfirmDialog></ConfirmDialog>
-
     <Head title="Patients" />
     <AppLayout>
         <template #header>
-            <div class="p-2">
+            <div class="p-1">
                 <div>
                     <span class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Patients</span>
                     <span class="h-fit min-h-full flex justify-end" style="margin-top: -24px;">
-                        <a href="/pateints/create">
+                        <a @click="create()">
                             <PrimaryButton class="ml-2 float-right" type="button">
                                 <i class="pi pi-plus"></i>&nbsp;
                                 Add Patient
@@ -19,8 +18,11 @@
             </div>
         </template>
         <div class="py-2">
-            <div v-if="$page.props.flash.notification" class="alert">
-                {{ $page.props.flash.notification }}
+            <div v-if="$page.props.flash.message"
+                class="bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md" role="alert">
+                <div class="flex">
+                    <p class="font-bold">{{ $page.props.flash.message }}</p>
+                </div>
             </div>
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-2 text-gray-900 dark:text-gray-100">
@@ -41,23 +43,24 @@
                             <template #empty>
                                 No patients found.
                             </template>
+                            <Column field="id" header="ID" :sortable="true"></Column>
                             <Column field="name" header="Name" :sortable="true"></Column>
-                            <Column field="contact_number" header="Contact Number" :sortable="true"></Column>
-                            <Column field="email_id" header="Email" :sortable="true"></Column>
-                            <Column field="city" header="City" :sortable="true"></Column>
-                            <Column header="Actions">
+                            <Column field="contact_number" header="Contact Number" :sortable="false"></Column>
+                            <Column field="email_id" header="Email" :sortable="false"></Column>
+                            <Column field="city" header="City" :sortable="false"></Column>
+
+                            <Column header="">
                                 <template #body="slotProps">
-                                    <span>
-                                        <a :href="'pateints/' + slotProps.data.id">
-                                            <i class="pi pi-eye"></i>
-                                        </a>
-                                        &nbsp;&nbsp;
-                                        <a :href="'pateints/edit/' + slotProps.data.id">
-                                            <i class="pi pi-user-edit"></i>
-                                        </a>
-                                        &nbsp;&nbsp;
-                                        <a href="#" @click="delete ('id')"><i class="pi pi-trash"></i></a>
-                                    </span>
+                                    <div class="">
+                                        <label>&nbsp;</label>
+                                        <div>
+                                            <span>
+                                                <a href="#"><i class="pi pi-ellipsis-v"
+                                                        @click="toggle($event, slotProps.data.id)"></i></a>
+                                            </span>
+                                            <Menu ref="menu" :model="items" :popup="true" />
+                                        </div>
+                                    </div>
                                 </template>
                             </Column>
                         </DataTable>
@@ -68,7 +71,7 @@
     </AppLayout>
 </template>
 <script>
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
@@ -77,13 +80,55 @@ import ConfirmDialog from 'primevue/confirmdialog';
 import Button from 'primevue/button';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import InputText from 'primevue/inputtext';
+import Menu from 'primevue/menu';
 
 export default {
     data() {
         return {
             filters: {
                 "global": { value: null, matchMode: FilterMatchMode.CONTAINS }
-            }
+            },
+            items: [
+                {
+                    label: 'View',
+                    icon: 'pi pi-eye',
+                    command: (event) => {
+                        router.get('/pateints/' + this.selected)
+                    }
+                },
+                {
+                    label: 'Edit',
+                    icon: 'pi pi-user-edit',
+                    command: (event) => {
+                        router.get('/pateints/edit/' + this.selected)
+                    }
+                },
+                {
+                    label: 'Delete',
+                    icon: 'pi pi-trash',
+                    command: (event) => {
+                        this.$confirm.require({
+                            message: 'Are you sure you want to proceed?',
+                            header: 'Confirmation',
+                            icon: 'pi pi-exclamation-triangle',
+                            accept: () => {
+                                this.delete(this.selected)
+                            },
+                            reject: () => {
+                                //callback to execute when user rejects the action
+                            },
+                            onShow: () => {
+                                //callback to execute when dialog is shown
+                            },
+                            onHide: () => {
+                                //callback to execute when dialog is hidden
+                            }
+                        });
+                    }
+                }
+            ],
+            selected: null,
+            form: null
         }
     },
     components: {
@@ -95,29 +140,20 @@ export default {
         ConfirmDialog,
         Button,
         FilterMatchMode,
-        InputText
+        InputText,
+        Menu
     },
     methods: {
-        delete() {
-            this.$confirm.require({
-                message: 'Are you sure you want to proceed?',
-                header: 'Confirmation',
-                icon: 'pi pi-exclamation-triangle',
-                accept: () => {
-                    console.log("HERE");
-                    //callback to execute when user confirms the action
-                },
-                reject: () => {
-                    //callback to execute when user rejects the action
-                },
-                onShow: () => {
-                    //callback to execute when dialog is shown
-                },
-                onHide: () => {
-                    //callback to execute when dialog is hidden
-                }
-            });
+        toggle(event, patient_id) {
+            this.selected = patient_id;
+            this.$refs.menu.toggle(event);
         },
+        delete(id) {
+            this.$inertia.delete(route('pateints/delete', id));
+        },
+        create() {
+            router.get('/pateints/create')
+        }
     }
 }
 

@@ -13,13 +13,14 @@ return new class extends Migration
     {
         Schema::create('appointments', function (Blueprint $table) {
             $table->id();
-            $table->integer('patient_id')->references('id')->on('patients');
+            $table->integer('patient_id')->references('id')->on('patients')->onDelete('cascade');
             $table->integer('doctor_id')->references('id')->on('doctors');
             $table->string('purpose', 250);
             $table->timestamp('appointment_time');
             $table->text('additional_information');
             $table->string('status',25);
             $table->timestamps();
+            $table->softDeletesTz($column = 'deleted_at', $precision = 0);
         });
     }
 
