@@ -60,17 +60,6 @@
                                     </div>
                                 </template>
                             </Column>
-                            <!-- <Column header="Actions">
-                                <template #body="slotProps">
-                                    <span>
-                                        <a :href="'doctors/edit/' + slotProps.data.id">
-                                            <i class="pi pi-user-edit"></i>
-                                        </a>
-                                        &nbsp;&nbsp;
-                                        <a href="#" @click="delete ('id')"><i class="pi pi-trash"></i></a>
-                                    </span>
-                                </template>
-                            </Column> -->
                         </DataTable>
                     </div>
                 </div>
@@ -145,7 +134,6 @@ export default {
     methods: {
         toggle(event, doctor_id) {
             this.selected = doctor_id;
-            console.log(this.$refs.menu)
             this.$refs.menu.toggle(event);
         },
         delete(id) {

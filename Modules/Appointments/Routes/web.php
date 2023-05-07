@@ -17,5 +17,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/create', 'AppointmentsController@create')->name('appointments/create');
         Route::post('/create', 'AppointmentsController@store')->name('appointments/create');
         Route::get('/edit/{id}', 'AppointmentsController@create')->name('appointments/edit');
+        Route::post('/update', 'AppointmentsController@update')->name('appointments/update');
     });
 });

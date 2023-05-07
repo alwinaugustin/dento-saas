@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use  Modules\Appointments\Entities\Appointment;
 use Inertia\Inertia;
+use Modules\Doctors\Entities\Doctor;
 
 class AppointmentsController extends Controller
 {
@@ -19,21 +20,24 @@ class AppointmentsController extends Controller
         $appointments           = Appointment::with(['patient', 'doctor'])->get();
         $appointmentDetails     = [];
         
-        foreach($appointments as $appointment) {
-            $appointmentDetails[] = [
-                'id'                =>$appointment->id,
-                'patient_id'        =>$appointment->patient->id,
-                'patient_name'      =>$appointment->patient->name,
-                'doctor_name'       =>$appointment->doctor->name,
-                'contact_number'    =>$appointment->patient->contact_number,
-                'purpose'           =>$appointment->purpose,
-                'appointment_time'  =>date('d-m-Y H:i:s', strtotime($appointment->appointment_time)),
-                'status'            =>$appointment->status
+        $appointmentDetails = $appointments->map(function ($appointment) {
+            return [
+                'id' => $appointment->id,
+                'patient_id' => $appointment->patient?->id,
+                'patient_name' => $appointment->patient?->name,
+                'doctor_name' => $appointment->doctor?->name,
+                'doctor_id' => $appointment->doctor?->id,
+                'contact_number' => $appointment->patient?->contact_number,
+                'purpose' => $appointment->purpose,
+                'appointment_time' => date('d-m-Y H:i:s', strtotime($appointment->appointment_time)),
+                'status' => $appointment->status,
             ];
-        }
+        })->all();
+        $doctors = Doctor::get();
 
         return Inertia::render('Appointments::Index', [
-            'appointments' => $appointmentDetails
+            'appointments' => $appointmentDetails,
+            'doctors'=>$doctors
         ]);
     }
 
@@ -61,7 +65,6 @@ class AppointmentsController extends Controller
      */
     public function store(Request $request)
     {
-
         $doctor = Appointment::updateOrCreate([
             'id'=>$request->get('id')
         ], $request->validate([
@@ -75,14 +78,14 @@ class AppointmentsController extends Controller
 
         return redirect('/appointments')->with('notification','Appointment Added Successfully');
     }
-
     /**
-     * Remove the specified resource from storage.
-     * @param int $id
-     * @return Renderable
+     * 
      */
-    public function destroy($id)
-    {
-        //
+    public function update(Request $request) {
+        $input = $request->except('id');
+        $appointment_id = $request->input('id');
+        Appointment::find($appointment_id)->update($input);
+
+        return redirect('/appointments')->with('message', 'Appointment updated Successfully');
     }
 }

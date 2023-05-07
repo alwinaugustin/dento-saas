@@ -186,7 +186,6 @@
                         </div>
                         <div class="mt-3">
                             <div class="flex justify-end">
-                                <!-- <SecondaryButton class="ml-2" @click="cancel()">Cancel</SecondaryButton> -->
                                 <PrimaryButton class="ml-2" :class="{ 'opacity-25': form.processing }"
                                     :disabled="form.processing">
                                     Reschedule

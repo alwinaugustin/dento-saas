@@ -1,7 +1,7 @@
 <template>
     <ConfirmDialog></ConfirmDialog>
 
-    <Head title="Doctors" />
+    <Head title="Appointments" />
     <AppLayout>
         <template #header>
             <div class="p-2">
@@ -19,8 +19,11 @@
             </div>
         </template>
         <div class="py-2">
-            <div v-if="$page.props.flash.notification" class="alert">
-                {{ $page.props.flash.notification }}
+            <div v-if="$page.props.flash.message"
+                class="bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md" role="alert">
+                <div class="flex">
+                    <p class="font-bold">{{ $page.props.flash.message }}</p>
+                </div>
             </div>
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-2 text-gray-900 dark:text-gray-100">
@@ -52,22 +55,57 @@
                                     <span :class="'customer-badge status-' + data.status">{{ data.status }}</span>
                                 </template>
                             </Column>
-                            <Column header="Actions">
+                            <Column header="">
                                 <template #body="slotProps">
-                                    <span>
-                                        &nbsp;&nbsp;
-                                        <a :href="'appointments/edit/' + slotProps.data.id">
-                                            <i class="pi pi-file-edit"></i>
-                                        </a>
-
-                                        <!-- <a href="#" @click="delete ('id')"><i class="pi pi-trash"></i></a> -->
-                                    </span>
+                                    <div class="">
+                                        <label>&nbsp;</label>
+                                        <div>
+                                            <span>
+                                                <a href="#"><i class="pi pi-ellipsis-v"
+                                                        @click="toggle($event, slotProps.data.id)"></i></a>
+                                            </span>
+                                            <Menu ref="menu" :model="items" :popup="true" />
+                                        </div>
+                                    </div>
                                 </template>
                             </Column>
                         </DataTable>
                     </div>
                 </div>
             </div>
+            <Dialog v-model:visible="rescheduleVisible" modal header="Reschedule" :style="{ width: '30vw' }">
+                <form @submit.prevent="submit">
+                    <div class="bg-white dark:bg-gray-800 sm:rounded-lg">
+                        <div class="p-2 text-gray-900 dark:text-gray-100">
+                            <div class="grid grid-col-1 gap-3">
+                                <div class="p-2">
+                                    <div>
+                                        <InputLabel for="appointment_time" value="Date and Time" />
+                                        <Calendar inputId="appointment_time" v-model="form.appointment_time"
+                                            :showTime="true" :showSeconds="false" hourFormat="12" dateFormat="dd-mm-yy" />
+                                    </div>
+                                </div>
+                                <div class="p-2">
+                                    <div>
+                                        <InputLabel for="doctor" value="Doctor" />
+                                        <Dropdown v-model="form.doctor_id" :options="doctors" optionLabel="name"
+                                            optionValue="id" placeholder="Select Doctor" :filter="true" />
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" v-model="form.id">
+                            <div class="mt-3">
+                                <div class="flex justify-end">
+                                    <PrimaryButton class="ml-2" :class="{ 'opacity-25': form.processing }"
+                                        :disabled="form.processing">
+                                        Reschedule
+                                    </PrimaryButton>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </Dialog>
         </div>
     </AppLayout>
 </template>
@@ -81,14 +119,82 @@ import ConfirmDialog from 'primevue/confirmdialog';
 import Button from 'primevue/button';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import InputText from 'primevue/inputtext';
+import Menu from 'primevue/menu';
+import Calendar from 'primevue/calendar';
+import Dropdown from 'primevue/dropdown';
+import Dialog from 'primevue/dialog';
+import moment from 'moment';
 
 export default {
     data() {
         return {
             filters: {
                 "global": { value: null, matchMode: FilterMatchMode.CONTAINS }
-            }
+            },
+            form: {
+                appointment_time: null,
+                doctor_id: null,
+                id: null
+            },
+            rescheduleVisible: false,
+            items: [
+                {
+                    label: 'Cancel',
+                    icon: 'pi pi-ban',
+                    command: (event) => {
+                        this.$confirm.require({
+                            message: 'Are you sure you want to proceed?',
+                            header: 'Confirmation',
+                            icon: 'pi pi-exclamation-triangle',
+                            accept: () => {
+                                this.cancel(this.selected)
+                            }
+                        });
+                    }
+                },
+                {
+                    label: 'Add Bill',
+                    icon: 'pi pi-dollar',
+                    command: (event) => {
+                        router.get('/appointments/add-bill/' + this.selected.id)
+                    }
+                },
+                {
+                    label: 'Mark Completed',
+                    icon: 'pi pi-lock',
+                    command: (event) => {
+                        this.$confirm.require({
+                            message: 'Are you sure you want to proceed?',
+                            header: 'Confirmation',
+                            icon: 'pi pi-exclamation-triangle',
+                            accept: () => {
+                                this.complete(this.selected)
+                            }
+                        });
+                    },
+                },
+                {
+                    label: 'Reschdule',
+                    icon: 'pi pi-calendar-plus',
+                    command: (event) => {
+                        this.rescheduleVisible = true
+                        this.form.appointment_time = this.selected.appointment_time;
+                        this.form.doctor_id = this.selected.doctor_id;
+                        this.form.id = this.selected.id;
+                    },
+                },
+                {
+                    label: 'Patient Details',
+                    icon: 'pi pi-eye',
+                    command: (event) => {
+                        router.get('/pateints/' + this.selected.patient_id)
+                    },
+                }
+            ]
         }
+    },
+    props: {
+        doctors: Object
     },
     components: {
         Head,
@@ -99,31 +205,37 @@ export default {
         ConfirmDialog,
         Button,
         FilterMatchMode,
-        InputText
+        InputText,
+        Menu,
+        Calendar,
+        Dropdown,
+        Dialog
     },
     methods: {
-        delete() {
-            this.$confirm.require({
-                message: 'Are you sure you want to proceed?',
-                header: 'Confirmation',
-                icon: 'pi pi-exclamation-triangle',
-                accept: () => {
-                    console.log("HERE");
-                    //callback to execute when user confirms the action
-                },
-                reject: () => {
-                    //callback to execute when user rejects the action
-                },
-                onShow: () => {
-                    //callback to execute when dialog is shown
-                },
-                onHide: () => {
-                    //callback to execute when dialog is hidden
-                }
-            });
+        cancel(id) {
+            const payload = {
+                'id': this.selected.id,
+                'status': 'cancelled'
+            }
+            this.$inertia.post(route('appointments/update'), payload);
+        },
+        complete(id) {
+            const payload = {
+                'id': this.selected.id,
+                'status': 'completed'
+            }
+            this.$inertia.post(route('appointments/update'), payload);
+        },
+        toggle(event, appointment_id) {
+            this.selected = this.$page['props']['appointments'].find((item) => item.id === appointment_id);
+            this.$refs.menu.toggle(event);
         },
         create() {
             router.get('/appointments/create')
+        },
+        submit() {
+            this.rescheduleVisible = false;
+            this.$inertia.post(route('appointments/update'), this.form);
         }
     }
 }
