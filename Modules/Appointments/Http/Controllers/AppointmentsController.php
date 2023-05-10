@@ -35,8 +35,19 @@ class AppointmentsController extends Controller
         })->all();
         $doctors = Doctor::get();
 
+        $tableColumns = [
+            ['field' => 'patient_name', 'header' => 'Patient Name', 'sortable' => true],
+            ['field' => 'contact_number', 'header' => 'Contact Number', 'sortable' => true],
+            ['field' => 'doctor_name', 'header' => 'Doctor Name', 'sortable' => true],
+            ['field' => 'purpose', 'header' => 'Purpose', 'sortable' => true],
+            ['field' => 'appointment_time','header' => 'Time', 'sortable' => true],
+        ];
+        $globalFilterFields = ['patient_name', 'doctor_name', 'contact_number', 'purpose'];
+
         return Inertia::render('Appointments::Index', [
             'appointments' => $appointmentDetails,
+            'columns' => $tableColumns,
+            'globalFilterFields' => $globalFilterFields,
             'doctors'=>$doctors
         ]);
     }

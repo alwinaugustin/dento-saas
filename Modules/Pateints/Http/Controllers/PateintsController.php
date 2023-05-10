@@ -63,15 +63,15 @@ class PateintsController extends Controller
 
        $request['patient_file_path']       = $filePath;
        $request['medical_conditions'] = implode(',', $request['medical_conditions']);
-      // dd($request->all());
-
+    //dd($request->all());
+    try {
         $patient = Patient::updateOrCreate([
             'id'=>$request->get('id')
         ], $request->validate(
             [
                 'prefix'            =>'required',
                 'name'              =>'required|max:50|regex:/^[\pL\s\-]+$/u',
-                'gender'            =>'required|max:50|alpha:ascii|in:male,female,other',
+                'gender'            =>'required|max:50|alpha:ascii|in:Male,Female,Other',
                 'age'               =>'required|numeric',
                 'blood_group'       =>'required',
                 'marital_status'    =>'required',
@@ -88,6 +88,9 @@ class PateintsController extends Controller
                 'medical_conditions' => 'string',
                 'patient_file_path'      =>'string'
         ]));
+    } catch (\Exception $e) {
+        dd($e);
+    }
 
         return redirect('/pateints')->with('message','Patient Added Successfully');
     }

@@ -28,6 +28,7 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-2 text-gray-900 dark:text-gray-100">
                     <div class="p-2">
+
                         <DataTable :value="$page['props']['appointments']" responsiveLayout="scroll" :paginator="true"
                             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                             :rows="10" dataKey="id" :rowsPerPageOptions="[10, 25, 50]"
@@ -45,11 +46,8 @@
                             <template #empty>
                                 No appointments found.
                             </template>
-                            <Column field="patient_name" header="Patient Name" :sortable="true"></Column>
-                            <Column field="contact_number" header="Contact Number" :sortable="true"></Column>
-                            <Column field="doctor_name" header="Doctor Name" :sortable="true"></Column>
-                            <Column field="purpose" header="Purpose" :sortable="true"></Column>
-                            <Column field="appointment_time" header="Time" :sortable="true"></Column>
+                            <Column v-for="column in $page['props']['columns']" :key="column.field" :field="column.field"
+                                :header="column.header" :sortable="true"></Column>
                             <Column header="Status">
                                 <template #body="{ data }">
                                     <span :class="'customer-badge status-' + data.status">{{ data.status }}</span>
