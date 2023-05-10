@@ -63,34 +63,33 @@ class PateintsController extends Controller
 
        $request['patient_file_path']       = $filePath;
        $request['medical_conditions'] = implode(',', $request['medical_conditions']);
-    //dd($request->all());
-    try {
-        $patient = Patient::updateOrCreate([
-            'id'=>$request->get('id')
-        ], $request->validate(
-            [
-                'prefix'            =>'required',
-                'name'              =>'required|max:50|regex:/^[\pL\s\-]+$/u',
-                'gender'            =>'required|max:50|alpha:ascii|in:Male,Female,Other',
-                'age'               =>'required|numeric',
-                'blood_group'       =>'required',
-                'marital_status'    =>'required',
-                'contact_number'    =>'required',
-                'email_id'          =>'required|email',
-                'immediate_contact' =>'required',
-                'contact_relation'  =>'alpha:ascii',
-                'address'           =>'required|max:250',
-                'address_2'         =>'required|max:250',
-                'city'              =>'required|max:50',
-                'state'             =>'required|max:50',
-                'postal_code'       =>'required|numeric',
-                'referred_by'       =>'alpha',
-                'medical_conditions' => 'string',
-                'patient_file_path'      =>'string'
-        ]));
-    } catch (\Exception $e) {
-        dd($e);
-    }
+        try {
+            $patient = Patient::updateOrCreate([
+                'id'=>$request->get('id')
+            ], $request->validate(
+                [
+                    'prefix'            =>'required',
+                    'name'              =>'required|max:50|regex:/^[\pL\s\-]+$/u',
+                    'gender'            =>'required|max:50|alpha:ascii|in:Male,Female,Other',
+                    'age'               =>'required|numeric',
+                    'blood_group'       =>'required',
+                    'marital_status'    =>'required',
+                    'contact_number'    =>'required',
+                    'email_id'          =>'required|email',
+                    'immediate_contact' =>'required',
+                    'contact_relation'  =>'alpha:ascii',
+                    'address'           =>'required|max:250',
+                    'address_2'         =>'required|max:250',
+                    'city'              =>'required|max:50',
+                    'state'             =>'required|max:50',
+                    'postal_code'       =>'required|numeric',
+                    'referred_by'       =>'alpha',
+                    'medical_conditions' => 'string',
+                    'patient_file_path'      =>'string'
+            ]));
+        } catch (\Exception $e) {
+            dd($e);
+        }
 
         return redirect('/pateints')->with('message','Patient Added Successfully');
     }
